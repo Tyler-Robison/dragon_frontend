@@ -1,0 +1,26 @@
+.NavBar {
+    background-color: rgb(252, 184, 58);
+    color: blue;
+    border-bottom: 2px blue solid;
+}
+
+.nav-link.active {
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.NavBar-Brand {
+    margin-left: 3rem;
+}
+
+.login {
+    font-size: 1.2rem;
+}
+
+.signup {
+    font-size: 1.2rem;
+}
+
+.brand-img {
+    margin-left: 0.2rem;
+}
