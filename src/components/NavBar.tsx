@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css"
 // import GlobalContext from "../context/GlobalContext";
 import { Navbar, Container } from "react-bootstrap";
-import './NavBar.css'
+import '../css/NavBar.css'
 
 /** NavBar is always visible, allows quick navigation between the site's main features
  * 
@@ -11,7 +11,7 @@ import './NavBar.css'
  * 
  * loggedInView - displays the four main features of the site (Find Recipes, Saved Recipes, Mealplan, Calculate Points) and logout button
   */
-const NavBar = () => {
+const NavBar: React.FC = () => {
     // const { currentUser } = useContext(GlobalContext)
 
 
@@ -19,17 +19,17 @@ const NavBar = () => {
     return (
         <Navbar className="NavBar" expand="lg">
 
-            <Navbar.Brand className="NavBar-Brand">
+            {/* <Navbar.Brand className="NavBar-Brand">
                 <NavLink className="nav-link" to="/home">
                     DnD Character Creator
                 </NavLink>
-            </Navbar.Brand>
+            </Navbar.Brand> */}
 
             <Container className="NavBar-Container">
 
-                <NavLink className="nav-link" to="/character/new">
+                {/* <NavLink className="nav-link" to="/character/new">
                     Character Creator
-                </NavLink>
+                </NavLink> */}
 
             </Container>
         </Navbar>

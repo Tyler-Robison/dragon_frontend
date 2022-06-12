@@ -14,7 +14,7 @@ const RouteList: React.FC = () => {
         <Routes>
 
             {/* homepage */}
-            <Route path="/healthyeater" element={<Home />} />
+            <Route path="/home" element={<Home />} />
 
 
 

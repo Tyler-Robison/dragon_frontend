@@ -10,25 +10,25 @@ import RouteList from './components/RouteList';
 
 
 const App: React.FC = () => {
-  const [todos, setTodos] = useState<Todo[]>(initTodos)
+    const [todos, setTodos] = useState<Todo[]>(initTodos)
 
-  const addTodo = (text: string) => {
-    // setTodos([...todos, { id: Math.random(), text }])
-    setTodos(latestTodos => [...latestTodos, { id: Math.random(), text }]) // ensures we are using latest version of todos state. 
-  }
+    const addTodo = (text: string) => {
+        // setTodos([...todos, { id: Math.random(), text }])
+        setTodos(latestTodos => [...latestTodos, { id: Math.random(), text }]) // ensures we are using latest version of todos state. 
+    }
 
-  const deleteTodo = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id))
-  }
+    const deleteTodo = (id: number) => {
+        setTodos(todos.filter(todo => todo.id !== id))
+    }
 
-  return (
-    <div className="App">
-      <NewTodo addTodo={addTodo} />
-      <TodoList items={todos} deleteTodo={deleteTodo} />
-      <NavBar />
-      <RouteList />
-    </div>
-  );
+    return (
+        <div className="App">
+            {/* <NewTodo addTodo={addTodo} />
+            <TodoList items={todos} deleteTodo={deleteTodo} /> */}
+            <NavBar />
+            <RouteList />
+        </div>
+    );
 }
 
 export default App;
