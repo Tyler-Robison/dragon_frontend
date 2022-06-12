@@ -27,9 +27,9 @@ const NavBar: React.FC = () => {
 
             <Container className="NavBar-Container">
 
-                {/* <NavLink className="nav-link" to="/character/new">
+                <NavLink className="nav-link" to="/character/new">
                     Character Creator
-                </NavLink> */}
+                </NavLink>
 
             </Container>
         </Navbar>
