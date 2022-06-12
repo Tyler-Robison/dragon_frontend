@@ -1,6 +1,12 @@
-# Getting Started with Create React App
+# DnD Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the front-end of my dnd character creator.
+
+Will be a react/redux app, connected to a postgres/express/node backend.
+
+Most doing this for more TypeScript and redux practice. 
+
+Once I have the character creator up and running I will add additional functionality. 
 
 ## Available Scripts
 

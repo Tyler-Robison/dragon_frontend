@@ -19,11 +19,11 @@ const NavBar: React.FC = () => {
     return (
         <Navbar className="NavBar" expand="lg">
 
-            {/* <Navbar.Brand className="NavBar-Brand">
+            <Navbar.Brand className="NavBar-Brand">
                 <NavLink className="nav-link" to="/home">
                     DnD Character Creator
                 </NavLink>
-            </Navbar.Brand> */}
+            </Navbar.Brand>
 
             <Container className="NavBar-Container">
 
