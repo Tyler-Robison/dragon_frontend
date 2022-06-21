@@ -4,9 +4,9 @@ import { Action } from 'history'
 
 
 export type character = {
-    first_name: String
-    last_name: String
-    id: String
+    first_name: string
+    last_name: string
+    id: string
 }
 
 type CharactersSliceState = {
@@ -14,9 +14,9 @@ type CharactersSliceState = {
 }
 
 const starterChars: character[] = [
-    {first_name: 'Tyler', last_name: 'Robison', id: '1234'},
-    {first_name: 'Will', last_name: 'Green', id: '5678'},
-] 
+    { first_name: 'Tyler', last_name: 'Robison', id: '1234' },
+    { first_name: 'Will', last_name: 'Green', id: '5678' },
+]
 
 const initialState: CharactersSliceState = {
     characters: starterChars
@@ -35,15 +35,22 @@ export const charactersSlice = createSlice({
                 }
             ]
         },
-        removeCharacter: (state, action: PayloadAction<string>) => {
+        removeCharacter: (state, action: PayloadAction<String>) => {
             state.characters = state.characters.filter(char => {
                 return char.id !== action.payload
             })
-        }
+        },
+        editCharacter: (state, action: PayloadAction<character>) => {
+            state.characters = state.characters.map(char => {
+  
+                return (char.id === action.payload.id ? 
+                    action.payload : char);
+            })
+        }, 
     }
 })
 
-export const { addCharacter, removeCharacter } = charactersSlice.actions;
+export const { addCharacter, removeCharacter, editCharacter } = charactersSlice.actions;
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
