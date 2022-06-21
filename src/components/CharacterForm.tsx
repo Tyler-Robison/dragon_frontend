@@ -2,10 +2,16 @@ import React, { useContext, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from "formik";
 import characterValidate from "../formikValidation/characterCreation";
+import { v4 as uuid } from 'uuid';
+import { useDispatch } from "react-redux";
+import { character } from "../store";
+
 
 const CharacterCreationForm: React.FC = () => {
     const validate = characterValidate;
     const navigate = useNavigate();
+    const genId = () => uuid();
+    const dispatch = useDispatch()
 
     const formik = useFormik({
         initialValues: {
@@ -18,7 +24,14 @@ const CharacterCreationForm: React.FC = () => {
 
     const createCharacter = async (values: any) => {
         try {
+            console.log('vals', values)
+            const newCharacter: character = {
+                first_name: values.first_name,
+                last_name: values.last_name,
+                id: genId()
+            };
 
+            dispatch({ type: "ADD_CHARACTER", payload: newCharacter })
         } catch (err) {
             formik.resetForm();
             console.log('failed creation');
