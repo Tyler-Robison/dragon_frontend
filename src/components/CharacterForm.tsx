@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import characterValidate from "../formikValidation/characterCreation";
 import { v4 as uuid } from 'uuid';
 import { useDispatch } from "react-redux";
-import { character } from "../store";
+import { character, addCharacter } from "../store";
 
 
 const CharacterCreationForm: React.FC = () => {
@@ -31,7 +31,8 @@ const CharacterCreationForm: React.FC = () => {
                 id: genId()
             };
 
-            dispatch({ type: "ADD_CHARACTER", payload: newCharacter })
+            dispatch(addCharacter(newCharacter))
+            navigate('/characters')
         } catch (err) {
             formik.resetForm();
             console.log('failed creation');
