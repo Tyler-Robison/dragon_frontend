@@ -9,12 +9,7 @@ const Home: React.FC = () => {
 
     return (
         <div className="Home">
-            <div className="row mt-3">
-                <div className="Home-div col-12">
-
-                    <p>Homepage!!!!</p>
-                </div>
-            </div>
+            <p>Homepage!!!!</p>
         </div>
     )
 }

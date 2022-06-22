@@ -4,6 +4,7 @@ import Home from './Home'
 import CharacterCreationForm from "./CharacterForm";
 import CharacterList from "./CharacterList";
 import CharacterProfile from "./CharacterProfile";
+import Creation from "./Creation";
 
 /** RouteList Contains all routes used by Healthy-Eater app
  * 
@@ -20,7 +21,7 @@ const RouteList: React.FC = () => {
 
             {/* character creation */}
             <Route path="/character/new" element={<CharacterCreationForm />} />
-
+            <Route path="/creation" element={<Creation />} />
             <Route path="/characters" element={<CharacterList />} />
 
             <Route path="/characters/:characterID" element={<CharacterProfile />} />

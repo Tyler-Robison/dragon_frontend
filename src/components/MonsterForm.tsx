@@ -1,14 +1,14 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from "formik";
-import characterValidate from "../formikValidation/characterCreation";
+import monsterValidate from "../formikValidation/characterCreation";
 import { v4 as uuid } from 'uuid';
 import { useDispatch } from "react-redux";
 import { character, addCharacter } from "../store";
 
 
-const CharacterCreationForm: React.FC = () => {
-    const validate = characterValidate;
+const MonsterCreationForm: React.FC = () => {
+    const validate = monsterValidate;
     const navigate = useNavigate();
     const genId = () => uuid();
     const dispatch = useDispatch()
@@ -16,8 +16,7 @@ const CharacterCreationForm: React.FC = () => {
     const formik = useFormik({
         initialValues: {
             first_name: '',
-            last_name: '', 
-            abilities: ''
+            last_name: ''
         },
         validate,
         onSubmit: values => createCharacter(values),
@@ -43,7 +42,6 @@ const CharacterCreationForm: React.FC = () => {
 
     return (
         <div>
-            <h1>test</h1>
             <form onSubmit={formik.handleSubmit}>
                 <div>
                     <label htmlFor="first_name">First Name</label>
@@ -85,4 +83,4 @@ const CharacterCreationForm: React.FC = () => {
     )
 }
 
-export default CharacterCreationForm;
+export default MonsterCreationForm;

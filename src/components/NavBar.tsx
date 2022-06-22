@@ -35,6 +35,12 @@ const NavBar: React.FC = () => {
                     Character List
                 </NavLink>
 
+                <NavLink className="nav-link" to="/creation">
+                    Creation
+                </NavLink>
+
+
+
             </Container>
         </Navbar>
     )

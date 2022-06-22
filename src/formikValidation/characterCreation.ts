@@ -2,6 +2,7 @@ const characterValidate = (values: any) => {
     interface CharacterErrors {
         first_name?: string;
         last_name?: string;
+        abilities?: string
     }
 
     const errors: CharacterErrors = {};
