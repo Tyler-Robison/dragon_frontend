@@ -28,9 +28,10 @@ const EditCharacterForm: React.FC<EditCharacterFormProps> = ({ character }) => {
     const formikEditCharacter = async (values: any) => {
         try {
 
-            const editedCharacter: { first_name: string, last_name: string } = {
+            const editedCharacter: { first_name: string, last_name: string, abilities: string[] } = {
                 first_name: values.first_name,
                 last_name: values.last_name,
+                abilities: character.abilities
             };
 
             dispatch(editCharacter({ ...editedCharacter, id: character.id }))

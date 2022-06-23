@@ -6,11 +6,15 @@ import AbilityForm from "./AbilityForm";
 import { useFormik } from "formik";
 import characterValidate from "../formikValidation/characterCreation";
 import monsterValidate from "../formikValidation/monsterCreations";
+import { addCharacter, addMonster } from "../store";
+import { useDispatch } from "react-redux";
+import { v4 as uuid } from 'uuid';
 
 const CreationPartTwo = () => {
     const navigate = useNavigate()
     const { creationType } = useParams()
     const [abilities, setAbilities] = useState<string[]>([])
+    const dispatch = useDispatch()
 
     // let validate: (values: any) => CharacterErrors;
     let validate;
@@ -48,8 +52,18 @@ const CreationPartTwo = () => {
     })
 
     const updateCreation = (values: any) => {
-        const newCreation = { abilities, ...values }
-        console.log('creation', newCreation)
+        const newCreation = { abilities, ...values, id: uuid() }
+
+        if (creationType === 'Character') {
+            dispatch(addCharacter(newCreation));
+            navigate('/characters');
+        }
+
+        else if (creationType === 'Monster') {
+            dispatch(addMonster(newCreation));
+            navigate('/monsters');
+        }
+
     }
 
 

@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import Home from './Home'
 import CharacterCreationForm from "./CharacterForm";
-import CharacterList from "./CharacterList";
+import CIMList from "./CIMList";
 import CharacterProfile from "./CharacterProfile";
 import Creation from "./Creation";
 import CreationPartTwo from "./CreationPartTwo";
@@ -21,10 +21,11 @@ const RouteList: React.FC = () => {
             <Route path="/home" element={<Home />} />
 
             {/* character creation */}
-            {/* <Route path="/character/new" element={<CharacterCreationForm />} /> */}
             <Route path="/creation" element={<Creation />} />
             <Route path="/creation/:creationType" element={<CreationPartTwo />} />
-            <Route path="/characters" element={<CharacterList />} />
+            <Route path="/characters" element={<CIMList itemType="char" />} />
+            <Route path="/monsters" element={<CIMList itemType="monster" />} />
+            <Route path="/items" element={<CIMList itemType="item" />} />
 
             <Route path="/characters/:characterID" element={<CharacterProfile />} />
 

@@ -35,6 +35,14 @@ const NavBar: React.FC = () => {
                     Character List
                 </NavLink>
 
+                <NavLink className="nav-link" to="/monsters">
+                    Monster List
+                </NavLink>
+
+                <NavLink className="nav-link" to="/items">
+                    Item List
+                </NavLink>
+
                 <NavLink className="nav-link" to="/creation">
                     Creation
                 </NavLink>
