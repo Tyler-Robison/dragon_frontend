@@ -5,51 +5,54 @@ import { v4 as uuid } from 'uuid';
 import { useDispatch } from "react-redux";
 import { character, addCharacter } from "../store";
 import { characterAbilities, monsterAbilities } from "../abilities";
+import useTimedMessage from "../customHooks/useTimedMessage"
 
 
 interface AbilityFormProps {
     type: string;
+    abilities: string[];
+    setAbilities: (parameter: any) => any;
 }
 
-const AbilityForm: React.FC<AbilityFormProps> = ({ type }) => {
+const AbilityForm: React.FC<AbilityFormProps> = ({ type, abilities, setAbilities }) => {
 
     const navigate = useNavigate();
     const genId = () => uuid();
     const dispatch = useDispatch()
-    const [abilities, setAbilities] = useState<string[]>([])
+    const [failureMsg, setFailureMsg] = useTimedMessage(1500)
+
 
     const formik = useFormik({
         initialValues: {
             abilities: ''
         },
-        onSubmit: values => addAbility(values),
+        onSubmit: values => addAbility(values.abilities),
     })
 
     const addAbility = async (ability: any) => {
-        try {
-            console.log('vals', ability)
-            setAbilities([...abilities, ability])
-            console.log(abilities)
-     
-        } catch (err) {
-            formik.resetForm();
-            console.log('failed creation');
-            // import timedMsg and display fail msg here
+
+        if (ability === '' && type === 'Monster') ability = 'Multi Attack'
+        if (ability === '' && type === 'Character') ability = 'Fireball'
+        if (abilities.includes(ability)) {
+            setFailureMsg(true);
+            return;
         }
+
+        setAbilities([...abilities, ability])
     }
 
     const characterAbilityValues = characterAbilities.map(ability => {
-        return <option key={genId()} value={ability}>{ability}</option>
+        return <option key={ability} value={ability}>{ability}</option>
     })
 
     const monsterAbilityValues = monsterAbilities.map(ability => {
-        return <option key={genId()} value={ability}>{ability}</option>
+        return <option key={ability} value={ability}>{ability}</option>
     })
 
     return (
         <div>
+            {failureMsg && <p className="error-msg">Already added that ability</p>}
             <form onSubmit={formik.handleSubmit}>
-
 
                 <label htmlFor="abilities">Select Ability</label>
                 {type === 'Character' && <select

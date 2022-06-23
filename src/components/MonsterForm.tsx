@@ -1,86 +1,114 @@
-import React, { useContext, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import { useFormik } from "formik";
-import monsterValidate from "../formikValidation/characterCreation";
-import { v4 as uuid } from 'uuid';
-import { useDispatch } from "react-redux";
-import { character, addCharacter } from "../store";
+import React from "react";
 
+interface MonsterCreationInputsProps {
+    formik: any
+}
 
-const MonsterCreationForm: React.FC = () => {
-    const validate = monsterValidate;
-    const navigate = useNavigate();
-    const genId = () => uuid();
-    const dispatch = useDispatch()
+const MonsterCreationInputs: React.FC<MonsterCreationInputsProps> = ({ formik }) => {
 
-    const formik = useFormik({
-        initialValues: {
-            first_name: '',
-            last_name: ''
-        },
-        validate,
-        onSubmit: values => createCharacter(values),
-    })
-
-    const createCharacter = async (values: any) => {
-        try {
-            console.log('vals', values)
-            const newCharacter: character = {
-                first_name: values.first_name,
-                last_name: values.last_name,
-                id: genId()
-            };
-
-            dispatch(addCharacter(newCharacter))
-            navigate('/characters')
-        } catch (err) {
-            formik.resetForm();
-            console.log('failed creation');
-            // import timedMsg and display fail msg here
-        }
-    }
-
+ 
     return (
         <div>
-            <form onSubmit={formik.handleSubmit}>
-                <div>
-                    <label htmlFor="first_name">First Name</label>
-                    <input
-                        id="first_name"
-                        name="first_name"
-                        type='text'
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.first_name}
-                        placeholder="First Name"
-                    />
-                    {formik.touched.first_name && formik.errors.first_name && (
-                        <div className="error-msg">{formik.errors.first_name}</div>
-                    )}
-                </div>
+            <h1>Monster Attributes</h1>
 
-                <div>
-                    <label htmlFor="last_name">Last Name</label>
-                    <input
-                        id="last_name"
-                        name="last_name"
-                        type='text'
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.last_name}
-                        placeholder="Last Name"
-                    />
-                    {formik.touched.last_name && formik.errors.last_name && (
-                        <div className="error-msg">{formik.errors.last_name}</div>
-                    )}
-                </div>
+            <div>
+                <label htmlFor="species">Species</label>
+                <input
+                    id="species"
+                    name="species"
+                    type='text'
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.species}
+                    placeholder="Species"
+                />
+                {formik.touched.species && formik.errors.species && (
+                    <div className="error-msg">{formik.errors.species}</div>
+                )}
+            </div>
 
-                <button className="general-btn LoginForm-btn" data-testid="character-creation-btn" type="submit">Create Character</button>
+            <div>
+                <label htmlFor="hp">Hit Points</label>
+                <input
+                    id="hp"
+                    name="hp"
+                    type='text'
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.hp}
+                    placeholder="Hit Points"
+                />
+                {formik.touched.hp && formik.errors.hp && (
+                    <div className="error-msg">{formik.errors.hp}</div>
+                )}
+            </div>
 
-            </form>
+            <div>
+                <label htmlFor="attack">Attack</label>
+                <input
+                    id="attack"
+                    name="attack"
+                    type='text'
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.attack}
+                    placeholder="Attack"
+                />
+                {formik.touched.attack && formik.errors.attack && (
+                    <div className="error-msg">{formik.errors.attack}</div>
+                )}
+            </div>
+
+            <div>
+                <label htmlFor="ac">Armor Class</label>
+                <input
+                    id="ac"
+                    name="ac"
+                    type='text'
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.ac}
+                    placeholder="Armor Class"
+                />
+                {formik.touched.ac && formik.errors.ac && (
+                    <div className="error-msg">{formik.errors.ac}</div>
+                )}
+            </div>
+
+            <div>
+                <label htmlFor="level">Level</label>
+                <input
+                    id="level"
+                    name="level"
+                    type='text'
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.level}
+                    placeholder="Level"
+                />
+                {formik.touched.level && formik.errors.level && (
+                    <div className="error-msg">{formik.errors.level}</div>
+                )}
+            </div>
+
+            <div>
+                <label htmlFor="size">Size</label>
+                <input
+                    id="size"
+                    name="size"
+                    type='text'
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.size}
+                    placeholder="Size"
+                />
+                {formik.touched.size && formik.errors.size && (
+                    <div className="error-msg">{formik.errors.size}</div>
+                )}
+            </div>
 
         </div>
     )
 }
 
-export default MonsterCreationForm;
+export default MonsterCreationInputs;

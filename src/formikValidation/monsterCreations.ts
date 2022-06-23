@@ -1,17 +1,17 @@
 const monsterValidate = (values: any) => {
     interface CharacterErrors {
-        name?: string;
+        species?: string;
         hp?: string;
         attack?: string;
-        armor_class?: string;
+        ac?: string;
         level?: string;
         size?: string
     }
 
     const errors: CharacterErrors = {};
 
-    if (!values.name) {
-        errors.name = 'Name Required';
+    if (!values.species) {
+        errors.species = 'Species Required';
     }
 
     if (!values.hp) {
@@ -22,8 +22,8 @@ const monsterValidate = (values: any) => {
         errors.attack = 'Attack Required';
     }
 
-    if (!values.armor_class) {
-        errors.armor_class = 'AC Required';
+    if (!values.ac) {
+        errors.ac = 'AC Required';
     }
 
     if (!values.level) {

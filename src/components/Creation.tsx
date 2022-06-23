@@ -3,10 +3,11 @@ import CharacterCreationForm from "./CharacterForm";
 import MonsterCreationForm from "./MonsterForm";
 import AbilityForm from "./AbilityForm";
 import { useFormik } from "formik";
+import { useNavigate } from 'react-router-dom';
 
 const Creation = () => {
 
-    const [creationType, setCreationType] = useState<string | null>(null)
+    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
@@ -16,13 +17,10 @@ const Creation = () => {
     })
 
     const handleFormikSubmit = (type: string) => {
-        if (type === '') type = 'Monster'
-        setCreationType(type)
-        console.log('type vals', type)
-    }
 
-    const reset = () => {
-        setCreationType(null);
+        console.log('type', type)
+        if (type === '') type = 'Monster'
+        navigate(`/creation/${type}`)
     }
 
     // add item
@@ -32,35 +30,23 @@ const Creation = () => {
         return <option key={type} value={type}>{type}</option>
     })
 
+    // value in form persists on reset independent of state
     return (
         <div>
-            {creationType === null && <h1>Select what you want to make</h1>}
-            {creationType !== null && <h1>{creationType} Creator</h1>}
+            <h1>Select what you want to make</h1>
 
-            {creationType === null &&
-                <form onSubmit={formik.handleSubmit}>
-                    <label htmlFor="typeSelect">Select Type</label>
-                    <select
-                        id="typeSelect"
-                        name="typeSelect"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                    // className="mx-2"
-                    >{typeValues}</select>
+            <form onSubmit={formik.handleSubmit}>
+                <label htmlFor="typeSelect">Select Type</label>
+                <select
+                    id="typeSelect"
+                    name="typeSelect"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                // className="mx-2"
+                >{typeValues}</select>
 
-                    <button type="submit">Choose Type</button>
-                </form>}
-
-            {creationType !== null && <form>
-
-                {creationType === 'Character' && <CharacterCreationForm />}
-                {creationType === 'Monster' && <MonsterCreationForm />}
-                {/* {creationType === 'Item' && <ItemCreationForm />} */}
-                <AbilityForm type={creationType} />
-                <button>Create {creationType}</button>
-            </form>}
-
-            <button onClick={reset}>Reset</button>
+                <button type="submit">Choose Type</button>
+            </form>
         </div>
     )
 }
