@@ -11,7 +11,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
 
     const dispatch = useDispatch()
 
-    const handleDelete = (id: String) => {
+    const handleDelete = (id: string) => {
         dispatch(removeItem(id));
     }
 

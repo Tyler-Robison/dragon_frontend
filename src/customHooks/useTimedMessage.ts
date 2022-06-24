@@ -1,8 +1,8 @@
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
 
- /** custom hook that displays a msg for a specified amount of time  */
+/** custom hook that displays a msg for a specified amount of time  */
 const useTimedMessage = (millisecs: number = 4000) => {
-    const [active, setActive] = useState<Boolean>(false);
+    const [active, setActive] = useState<boolean>(false);
 
     useEffect(
         function showSavedMessage() {
@@ -16,7 +16,26 @@ const useTimedMessage = (millisecs: number = 4000) => {
 
     );
 
-    const outputArray: [Boolean, Dispatch<SetStateAction<Boolean>>] = [active, setActive]
+    const outputArray: [Boolean, Dispatch<SetStateAction<boolean>>] = [active, setActive]
+    return outputArray
+}
+
+const useTimedMessage2 = (millisecs: number = 4000) => {
+    const [active, setActive] = useState<boolean>(false);
+    const timerId = useRef<NodeJS.Timer>();
+
+    useEffect(() => {
+        if (active) {
+            timerId.current = setTimeout(() => {
+                setActive(false);
+            }, millisecs);
+            return () => clearInterval(timerId.current!);
+        }
+    }, [active, millisecs]
+
+    );
+
+    const outputArray: [Boolean, Dispatch<SetStateAction<boolean>>] = [active, setActive]
     return outputArray
 }
 

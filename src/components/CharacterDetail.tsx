@@ -4,12 +4,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { selectCharacters } from "../store";
 import EditCharacterForm from "./EditCharacterForm";
 
-const CharacterProfile: React.FC = () => {
+const CharacterDetail: React.FC = () => {
     const { characterID } = useParams()
     const dispatch = useDispatch();
     const characters = useSelector(selectCharacters);
     const [isEditFormShowing, setIsEditFormShowing] = useState<Boolean>(false);
-    const [editId, setEditId] = useState<String | null>(null);
+    const navigate = useNavigate();
 
     const character = characters.find(char => char.id === characterID);
 
@@ -17,16 +17,21 @@ const CharacterProfile: React.FC = () => {
         setIsEditFormShowing(true);
     }
 
+    const goBack = () => {
+        navigate('/characters')
+    }
+
     return (
         <div>
             <div>
-                <p>First Name: {character!.first_name}</p>
-                <p>First Name: {character!.last_name}</p>
+                <button onClick={goBack}>Back</button>
+                <p> <b>First Name:</b> {character!.first_name}</p>
+                <p> <b>Last Name:</b> {character!.last_name}</p>
                 <button onClick={showEditForm}>Edit Character</button>
             </div>
-            {isEditFormShowing && <EditCharacterForm character={character!} />}
+            {isEditFormShowing && <EditCharacterForm character={character!} setIsEditFormShowing={setIsEditFormShowing}/>}
         </div>
     )
 }
 
-export default CharacterProfile;
+export default CharacterDetail;

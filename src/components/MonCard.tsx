@@ -9,7 +9,7 @@ interface MonCardProps {
 const MonCard: React.FC<MonCardProps> = ({ monster }) => {
     const dispatch = useDispatch()
 
-    const handleDelete = (id: String) => {
+    const handleDelete = (id: string) => {
         dispatch(removeMonster(id));
     }
 

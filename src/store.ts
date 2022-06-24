@@ -21,7 +21,8 @@ export type monster = {
 
 type itemTypes = 'Weapon' | 'Armor';
 
-// enforce weapon OR armor?????????????????
+// enforce attack OR armor?????????????????
+// if attack not present, armor MUST be
 export type item = {
     name: string;
     type: itemTypes;
@@ -87,7 +88,7 @@ export const charactersSlice = createSlice({
                 }
             ]
         },
-        removeCharacter: (state, action: PayloadAction<String>) => {
+        removeCharacter: (state, action: PayloadAction<string>) => {
             state.characters = state.characters.filter(char => {
                 return char.id !== action.payload
             })
@@ -119,8 +120,15 @@ export const monstersSlice = createSlice({
                 }
             ]
         },
-        removeMonster: (state, action: PayloadAction<String>) => {
+        removeMonster: (state, action: PayloadAction<string>) => {
             state.monsters = state.monsters.filter(monst => monst.id !== action.payload)
+        },
+        editMonster: (state, action: PayloadAction<monster>) => {
+            state.monsters = state.monsters.map(mon => {
+
+                return (mon.id === action.payload.id ?
+                    action.payload : mon);
+            })
         },
     }
 })
@@ -142,15 +150,22 @@ export const itemsSlice = createSlice({
                 }
             ]
         },
-        removeItem: (state, action: PayloadAction<String>) => {
+        removeItem: (state, action: PayloadAction<string>) => {
             state.items = state.items.filter(item => item.id !== action.payload)
+        },
+        editItem: (state, action: PayloadAction<item>) => {
+            state.items = state.items.map(item => {
+
+                return (item.id === action.payload.id ?
+                    action.payload : item);
+            })
         },
     }
 })
 
 export const { addCharacter, removeCharacter, editCharacter } = charactersSlice.actions;
-export const { addMonster, removeMonster } = monstersSlice.actions;
-export const { addItem, removeItem } = itemsSlice.actions;
+export const { addMonster, removeMonster, editMonster } = monstersSlice.actions;
+export const { addItem, removeItem, editItem } = itemsSlice.actions;
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>

@@ -1,9 +1,8 @@
 import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import Home from './Home'
-import CharacterCreationForm from "./CharacterForm";
 import CIMList from "./CIMList";
-import CharacterProfile from "./CharacterProfile";
+import CharacterDetail from "./CharacterDetail";
 import Creation from "./Creation";
 import CreationPartTwo from "./CreationPartTwo";
 
@@ -27,7 +26,7 @@ const RouteList: React.FC = () => {
             <Route path="/monsters" element={<CIMList itemType="monster" />} />
             <Route path="/items" element={<CIMList itemType="item" />} />
 
-            <Route path="/characters/:characterID" element={<CharacterProfile />} />
+            <Route path="/characters/:characterID" element={<CharacterDetail />} />
 
             {/* re-direct routes */}
             <Route path="/" element={<Navigate replace to="/home" />} />

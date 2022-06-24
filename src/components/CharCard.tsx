@@ -11,7 +11,7 @@ const CharCard: React.FC<CharCardProps> = ({ char }) => {
 
     const dispatch = useDispatch()
 
-    const handleDelete = (id: String) => {
+    const handleDelete = (id: string) => {
         dispatch(removeCharacter(id));
     }
 
@@ -25,7 +25,7 @@ const CharCard: React.FC<CharCardProps> = ({ char }) => {
                 <p><b>First Name:</b> {char.first_name}</p>
                 <p><b>Last Name:</b> {char.last_name}</p>
                 <p><b>Abilites:</b> {displayAbilities(char.abilities)}</p>
-                <Link to={`/characters/edit}`}><b>Edit</b></Link>
+                <Link to={`/characters/${char.id}`}><b>Edit</b></Link>
                 <button onClick={() => handleDelete(char.id)}>Delete</button>
                 <hr></hr>
             </div>
