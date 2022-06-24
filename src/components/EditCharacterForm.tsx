@@ -14,10 +14,14 @@ interface EditCharacterFormProps {
 const EditCharacterForm: React.FC<EditCharacterFormProps> = ({ character, setIsEditFormShowing }) => {
     const validate = editCharacterValidation;
     const dispatch = useDispatch()
-    const [checkedState, setCheckedState] = useState(
-        new Array(characterAbilities.length).fill(false)
-    )
+    // reverts to checkedState, change to be non-hardcoced accurate
 
+    const boolArray = characterAbilities.map(ability => {
+        return character.abilities.includes(ability) ? true : false;
+    })
+    
+    const [checkedState, setCheckedState] = useState<boolean[]>(boolArray)
+    
     const formik = useFormik({
         initialValues: {
             first_name: character.first_name,
@@ -84,7 +88,7 @@ const EditCharacterForm: React.FC<EditCharacterFormProps> = ({ character, setIsE
 
                 <div>
                     {characterAbilities.map((ability, idx) => {
-                        const isChecked = (character.abilities.includes(ability) ? true : false);
+                        const isChecked = character.abilities.includes(ability) ? true : false;
 
                         return <Checkbox
                             key={ability}

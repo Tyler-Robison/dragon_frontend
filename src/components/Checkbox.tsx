@@ -4,7 +4,7 @@ interface CheckboxProps {
     label: string
     isChecked: boolean
     checkedState: boolean[]
-    setCheckedState: any
+    setCheckedState: React.Dispatch<React.SetStateAction<boolean[]>>
     idx: number
 }
 
@@ -14,11 +14,10 @@ const Checkbox: React.FC<CheckboxProps> = ({ label, isChecked, checkedState, set
 
     // idx is checkbox index #
     useEffect(() => {
-        setCheckedState(() => checkedState.map((ele, i) => {
-            if (i === idx) return (checked ? true : false);
-            return ele
+        setCheckedState(() => checkedState.map((boolVal, i) => {
+            return i === idx ? checked : boolVal;
         }))
-    }, [checked])
+    }, [checked, setChecked])
 
 
     const handleChange = () => {
@@ -26,8 +25,6 @@ const Checkbox: React.FC<CheckboxProps> = ({ label, isChecked, checkedState, set
     };
 
     return (
-
-
         <label>
             <input
                 type="checkbox"
