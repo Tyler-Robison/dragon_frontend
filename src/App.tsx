@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import TodoList from './todoList/TodoList';
-import initTodos from './todoList/initTodos';
-import NewTodo from './todoList/NewTodo';
-import { Todo } from './todoList/todo.model'
-import { Route } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { MonsterAPI } from './APIs/monsterAPI';
+import { getStarterDataThunk } from './store';
 import NavBar from './components/NavBar';
 import RouteList from './components/RouteList';
+import { fillMonsters } from './store';
 
 
 const App: React.FC = () => {
-    const [todos, setTodos] = useState<Todo[]>(initTodos)
 
-    const addTodo = (text: string) => {
-        // setTodos([...todos, { id: Math.random(), text }])
-        setTodos(latestTodos => [...latestTodos, { id: Math.random(), text }]) // ensures we are using latest version of todos state. 
-    }
+    const dispatch = useDispatch();
+    useEffect(() => {
+        const getMonsters = async () => {
+            const starterMonsters = await MonsterAPI.findAll();
+            dispatch(fillMonsters(starterMonsters));
+        }
 
-    const deleteTodo = (id: number) => {
-        setTodos(todos.filter(todo => todo.id !== id))
-    }
+        getMonsters();
+    }, [])
+
+
 
     return (
         <div className="App">

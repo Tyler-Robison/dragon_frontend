@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { useFormik } from "formik";
 import editCharacterValidation from '../formikValidation/editCharacter'
 import { useDispatch } from "react-redux";
@@ -14,7 +14,10 @@ interface EditCharacterFormProps {
 const EditCharacterForm: React.FC<EditCharacterFormProps> = ({ character, setIsEditFormShowing }) => {
     const validate = editCharacterValidation;
     const dispatch = useDispatch()
-    // reverts to checkedState, change to be non-hardcoced accurate
+
+    // forwarding refs allow me to access them in parent
+    const ref = React.useRef<HTMLInputElement>(null);
+    console.log('outer ref', ref)
 
     const boolArray = characterAbilities.map(ability => {
         return character.abilities.includes(ability) ? true : false;
@@ -50,6 +53,12 @@ const EditCharacterForm: React.FC<EditCharacterFormProps> = ({ character, setIsE
             // import timedMsg and display fail msg here
         }
     }
+
+    // const myCheckBox = forwardRef((props, ref)) => {(
+    //     return <input 
+    //     ref={ref}
+    //     />
+    // )}
 
     return (
         <div>
@@ -88,17 +97,19 @@ const EditCharacterForm: React.FC<EditCharacterFormProps> = ({ character, setIsE
 
                 <div>
                     {characterAbilities.map((ability, idx) => {
-                        const isChecked = character.abilities.includes(ability) ? true : false;
+                        // const isChecked = character.abilities.includes(ability) ? true : false;
 
                         return <Checkbox
                             key={ability}
                             label={ability}
-                            isChecked={isChecked}
                             checkedState={checkedState}
                             setCheckedState={setCheckedState}
                             idx={idx}
+                            ref={ref}
                         />
                     })}
+
+                  
 
 
                 </div>

@@ -15,6 +15,8 @@ const CIMList: React.FC<CIMListProps> = ({ itemType }) => {
     const monsters = useSelector(selectMonsters)
     const items = useSelector(selectItems)
 
+    console.log('monstrs', monsters)
+    if (!monsters) return <p>Loading...</p>
     return (
 
         <div>

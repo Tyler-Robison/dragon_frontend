@@ -1,5 +1,7 @@
-import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { configureStore, createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { v4 as uuid } from 'uuid';
+import { MonsterAPI } from './APIs/monsterAPI';
+import React, { useEffect } from 'react';
 
 
 export type character = {
@@ -10,13 +12,25 @@ export type character = {
 }
 
 export type monster = {
-    species: string;
-    hp: string;
-    attack: string;
-    ac: string;
-    level: string;
-    size: string;
-    id: string;
+    id: number;
+    name: string;
+    ac: number;
+    acType: string;
+    challengeRating: number;
+    challengeXP: number;
+    con: number;
+    conMod: number;
+    str: number;
+    strMod: number;
+    dex: number;
+    dexMod: number;
+    int: number;
+    intMod: number;
+    wis: number;
+    wisMod: number;
+    cha: number;
+    chaMod: number;
+    hp: number;
 }
 
 type itemTypes = 'Weapon' | 'Armor';
@@ -50,11 +64,24 @@ const starterChars: character[] = [
     { first_name: 'Will', last_name: 'Green', abilities: ['Berserk'], id: uuid() },
 ]
 
-const starterMonsters: monster[] = [
-    { species: 'Red Dragon', hp: '400', attack: '4d6', ac: '19', level: '21', size: 'lg', id: uuid() },
-    { species: 'Yeti', hp: '80', attack: '1d10', ac: '15', level: '8', size: 'med', id: uuid() },
-    { species: 'Goblin', hp: '15', attack: '1d4', ac: '13', level: '1', size: 'sm', id: uuid() },
-]
+let starterMonsters: any;
+
+
+
+
+export const getStarterDataThunk = async () => {
+
+    starterMonsters = await MonsterAPI.findAll()
+
+}
+
+// const fillMonsterThunk = createAsyncThunk(
+//     'monsters/fillMonsters2',
+//     async () => {
+//         return MonsterAPI.findAll();
+//     }
+// )
+
 
 const starterItems: item[] = [
     { name: 'Long Sword', type: 'Weapon', attack: '1d8', value: '50', id: uuid() },
@@ -67,8 +94,9 @@ const initialCharacterState: CharactersSliceState = {
 }
 
 const initialMonsterState: MonstersSliceState = {
-    monsters: starterMonsters
+    monsters: []
 }
+console.log('init mon', initialMonsterState)
 
 const initialItemState: ItemsSliceState = {
     items: starterItems
@@ -103,24 +131,46 @@ export const charactersSlice = createSlice({
     }
 })
 
+export const fillMonsterThunk = createAsyncThunk(
+    'monsters/fillMonsterThunk',
+    async () => {
+        return await MonsterAPI.findAll();
+    }
+)
+
 export const monstersSlice = createSlice({
     name: 'monsters',
     initialState: initialMonsterState,
     reducers: {
+        fillMonsters: (state, action: PayloadAction<monster[]>) => {
+            state.monsters = [...action.payload];
+        },
         addMonster: (state, action: PayloadAction<monster>) => {
             state.monsters = [
                 ...state.monsters, {
-                    species: action.payload.species,
-                    hp: action.payload.hp,
-                    attack: action.payload.attack,
+                    id: action.payload.id,
+                    name: action.payload.name,
                     ac: action.payload.ac,
-                    level: action.payload.level,
-                    size: action.payload.size,
-                    id: action.payload.id
+                    acType: action.payload.acType,
+                    challengeRating: action.payload.challengeRating,
+                    challengeXP: action.payload.challengeXP,
+                    con: action.payload.con,
+                    conMod: action.payload.conMod,
+                    str: action.payload.str,
+                    strMod: action.payload.strMod,
+                    dex: action.payload.dex,
+                    dexMod: action.payload.dexMod,
+                    int: action.payload.int,
+                    intMod: action.payload.intMod,
+                    wis: action.payload.wis,
+                    wisMod: action.payload.wisMod,
+                    cha: action.payload.cha,
+                    chaMod: action.payload.chaMod,
+                    hp: action.payload.hp
                 }
             ]
         },
-        removeMonster: (state, action: PayloadAction<string>) => {
+        removeMonster: (state, action: PayloadAction<number>) => {
             state.monsters = state.monsters.filter(monst => monst.id !== action.payload)
         },
         editMonster: (state, action: PayloadAction<monster>) => {
@@ -130,8 +180,57 @@ export const monstersSlice = createSlice({
                     action.payload : mon);
             })
         },
-    }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(fillMonsterThunk.pending, (state, action) => {
+            // state.status = 'loading'
+        })
+        builder.addCase(fillMonsterThunk.fulfilled, (state, action) => {
+            state.monsters = action.payload
+            // state.status = 'success'
+        })
+        builder.addCase(fillMonsterThunk.rejected, (state, action) => {
+            // state.status = 'loading'
+        })
+    },
 })
+interface myData {
+
+}
+
+// const getPosts = createAsyncThunk(
+//     'posts/getPosts',
+//     async (thunkAPI) => {
+//         const res = await fetch('https://jsonplaceholder.typicode.com/posts').then(
+//             (data) => data.json()
+//         )
+//         return res
+//     })
+
+// const initialPostState = {
+//     entities: [],
+//     loading: false,
+// }
+
+// export const postSlice = createSlice({
+//     name: 'posts',
+//     initialPostState,
+//     reducers: {},
+//     extraReducers: {
+//       [getPosts.pending]: (state) => {
+//         state.loading = true
+//       },
+//       [getPosts.fulfilled]: (state, { payload }) => {
+//         state.loading = false
+//         state.entities = payload
+//       },
+//       [getPosts.rejected]: (state) => {
+//         state.loading = false
+//       },
+//     },
+//   })
+
+
 
 // how to make properties optional?????????????????????
 export const itemsSlice = createSlice({
@@ -143,8 +242,8 @@ export const itemsSlice = createSlice({
                 ...state.items, {
                     name: action.payload.name,
                     type: action.payload.type,
-                    attack: action.payload.attack,
-                    armor: action.payload.armor,
+                    attack: action.payload.attack ?? undefined,
+                    armor: action.payload.armor ?? undefined,
                     value: action.payload.value,
                     id: action.payload.id
                 }
@@ -164,7 +263,7 @@ export const itemsSlice = createSlice({
 })
 
 export const { addCharacter, removeCharacter, editCharacter } = charactersSlice.actions;
-export const { addMonster, removeMonster, editMonster } = monstersSlice.actions;
+export const { addMonster, removeMonster, editMonster, fillMonsters } = monstersSlice.actions;
 export const { addItem, removeItem, editItem } = itemsSlice.actions;
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

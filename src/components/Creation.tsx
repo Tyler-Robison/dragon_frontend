@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const Creation = () => {
 
     const navigate = useNavigate();
+    const [selected, setSelected] = useState('Monster')
 
     const formik = useFormik({
         initialValues: {
@@ -17,9 +18,7 @@ const Creation = () => {
     })
 
     const handleFormikSubmit = (type: string) => {
-
-        console.log('type', type)
-        if (type === '') type = 'Monster'
+        // if (type === '') type = 'Monster'
         navigate(`/creation/${type}`)
     }
 
@@ -29,6 +28,15 @@ const Creation = () => {
     const typeValues = types.map(type => {
         return <option key={type} value={type}>{type}</option>
     })
+
+    const fake = () => {
+        console.log('fake')
+    }
+
+    const handleChange = (e:any) => {
+        // console.log("Fruit Selected!!");
+        setSelected(e.target.value)
+    }
 
     // value in form persists on reset independent of state
     return (
@@ -40,8 +48,9 @@ const Creation = () => {
                 <select
                     id="typeSelect"
                     name="typeSelect"
-                    onChange={formik.handleChange}
+                    onChange={handleChange}
                     onBlur={formik.handleBlur}
+                    value={selected}
                 // className="mx-2"
                 >{typeValues}</select>
 
