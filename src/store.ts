@@ -2,6 +2,7 @@ import { configureStore, createSlice, PayloadAction, createAsyncThunk } from '@r
 import { v4 as uuid } from 'uuid';
 import { MonsterAPI } from './APIs/monsterAPI';
 import React, { useEffect } from 'react';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 
 export type character = {
@@ -132,6 +133,7 @@ export const charactersSlice = createSlice({
 })
 
 export const fillMonsterThunk = createAsyncThunk(
+    // what is the purpose of this string?
     'monsters/fillMonsterThunk',
     async () => {
         return await MonsterAPI.findAll();
@@ -194,42 +196,6 @@ export const monstersSlice = createSlice({
         })
     },
 })
-interface myData {
-
-}
-
-// const getPosts = createAsyncThunk(
-//     'posts/getPosts',
-//     async (thunkAPI) => {
-//         const res = await fetch('https://jsonplaceholder.typicode.com/posts').then(
-//             (data) => data.json()
-//         )
-//         return res
-//     })
-
-// const initialPostState = {
-//     entities: [],
-//     loading: false,
-// }
-
-// export const postSlice = createSlice({
-//     name: 'posts',
-//     initialPostState,
-//     reducers: {},
-//     extraReducers: {
-//       [getPosts.pending]: (state) => {
-//         state.loading = true
-//       },
-//       [getPosts.fulfilled]: (state, { payload }) => {
-//         state.loading = false
-//         state.entities = payload
-//       },
-//       [getPosts.rejected]: (state) => {
-//         state.loading = false
-//       },
-//     },
-//   })
-
 
 
 // how to make properties optional?????????????????????
@@ -270,6 +236,10 @@ export const { addItem, removeItem, editItem } = itemsSlice.actions;
 export type RootState = ReturnType<typeof store.getState>
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch
+
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+export const useAppDispatch = () => useDispatch<AppDispatch>()
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
 export const selectCharacters = (state: RootState) => state.characters.characters;
 export const selectMonsters = (state: RootState) => state.monsters.monsters;

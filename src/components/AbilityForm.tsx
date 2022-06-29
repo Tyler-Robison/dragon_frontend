@@ -18,6 +18,7 @@ const AbilityForm: React.FC<AbilityFormProps> = ({ type, abilities, setAbilities
 
     const navigate = useNavigate();
     const genId = () => uuid();
+    // change to newer dispatch
     const dispatch = useDispatch()
     const [failureMsg, setFailureMsg] = useTimedMessage(1500)
 
