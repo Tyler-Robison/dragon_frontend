@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useDispatch } from "react-redux";
-import { removeMonster } from "../store";
+import { removeMonster, monster } from "../../store";
+import { displayAbilities } from '../../supportFunctions'
 
 interface MonCardProps {
-    monster: any;
+    monster: monster;
 }
 
 const MonCard: React.FC<MonCardProps> = ({ monster }) => {
@@ -22,12 +23,13 @@ const MonCard: React.FC<MonCardProps> = ({ monster }) => {
                 <p>Armor Type: {monster.acType}</p>
                 <p>Challenge Rating: {monster.challengeRating}</p>
                 <p>Exp: {monster.challengeXP}</p>
-                <p>Con: {monster.con} ConMod: {monster.conMod}</p>
-                <p>Str: {monster.con} StrMod: {monster.conMod}</p>
-                <p>Dex: {monster.con} DexMod: {monster.conMod}</p>
-                <p>Int: {monster.con} IntMod: {monster.conMod}</p>
-                <p>Wis: {monster.con} WisMod: {monster.conMod}</p>
-                <p>Cha: {monster.con} ChaMod: {monster.conMod}</p>
+                <p>Con: {monster.con} Mod: {monster.conMod}</p>
+                <p>Str: {monster.str} Mod: {monster.strMod}</p>
+                <p>Dex: {monster.dex} Mod: {monster.dexMod}</p>
+                <p>Int: {monster.int} Mod: {monster.intMod}</p>
+                <p>Wis: {monster.wis} Mod: {monster.wisMod}</p>
+                <p>Cha: {monster.cha} Mod: {monster.chaMod}</p>
+                <p><b>Abilities:</b> {displayAbilities(monster.abilities)}</p>
 
                 <Link to={`/monsters/edit}`}><b>Edit</b></Link>
                 <button onClick={() => handleDelete(monster.id)}>Delete</button>

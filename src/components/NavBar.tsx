@@ -27,10 +27,6 @@ const NavBar: React.FC = () => {
 
             <Container className="NavBar-Container">
 
-                <NavLink className="nav-link" to="/character/new">
-                    Character Creator
-                </NavLink>
-
                 <NavLink className="nav-link" to="/characters">
                     Character List
                 </NavLink>
@@ -45,6 +41,10 @@ const NavBar: React.FC = () => {
 
                 <NavLink className="nav-link" to="/creation">
                     Creation
+                </NavLink>
+
+                <NavLink className="nav-link" to="/battle">
+                    Battle
                 </NavLink>
 
 

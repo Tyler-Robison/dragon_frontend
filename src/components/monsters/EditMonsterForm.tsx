@@ -1,10 +1,10 @@
 import React, { useState, forwardRef } from "react";
 import { useFormik } from "formik";
-import editCharacterValidation from '../formikValidation/editCharacter'
-import { useAppDispatch, useAppSelector } from "../store"; 
-import { monster, editMonster } from "../store";
-import Checkbox from './Checkbox'
-import { characterAbilities } from "../abilities";
+import editCharacterValidation from '../../formikValidation/editCharacter'
+import { useAppDispatch, useAppSelector } from "../../store"; 
+import { monster, editMonster } from "../../store";
+import Checkbox from '../Checkbox'
+import { characterAbilities } from "../../abilities";
 
 interface EditMonsterFormProps {
     monster: monster
@@ -27,8 +27,8 @@ const EditMonsterForm: React.FC<EditMonsterFormProps> = ({ monster, setIsEditFor
     
     const formik = useFormik({
         initialValues: {
-            first_name: monster.first_name,
-            last_name: monster.last_name
+            first_name: monster.name,
+            last_name: monster.hp
         },
         validate,
         onSubmit: values => formikEditCharacter(values),
@@ -36,22 +36,22 @@ const EditMonsterForm: React.FC<EditMonsterFormProps> = ({ monster, setIsEditFor
 
     // try/catch needed here? Shouldn't ever fail. 
     const formikEditCharacter = async (values: any) => {
-        try {
-            const newAbilities = characterAbilities.filter((ability, idx) => checkedState[idx])
+    //     try {
+    //         const newAbilities = characterAbilities.filter((ability, idx) => checkedState[idx])
 
-            const editedCharacter: { first_name: string, last_name: string, abilities: string[] } = {
-                first_name: values.first_name,
-                last_name: values.last_name,
-                abilities: newAbilities
-            };
+    //         const editedMonster: { name: string, hp: string, abilities: string[] } = {
+    //             name: values.name,
+    //             hp: values.hp,
+    //             abilities: newAbilities
+    //         };
 
-            dispatch(editMonster({ ...editedCharacter, id: character.id }))
-            setIsEditFormShowing(false);
-        } catch (err) {
-            formik.resetForm();
-            console.log('failed edit');
-            // import timedMsg and display fail msg here
-        }
+    //         dispatch(editMonster({ ...editedMonster, id: monster.id }))
+    //         setIsEditFormShowing(false);
+    //     } catch (err) {
+    //         formik.resetForm();
+    //         console.log('failed edit');
+    //         // import timedMsg and display fail msg here
+    //     }
     }
 
     return (

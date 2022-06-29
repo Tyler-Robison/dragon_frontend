@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import CharacterCreationInputs from "./CharacterForm";
-import MonsterCreationInputs from "./MonsterForm";
+import CharacterCreationInputs from "./characters/CharacterForm";
+import MonsterCreationInputs from "./monsters/MonsterForm";
 import AbilityForm from "./AbilityForm";
 import { useFormik } from "formik";
 import characterValidate from "../formikValidation/characterCreation";

@@ -1,14 +1,31 @@
 import { configureStore, createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { v4 as uuid } from 'uuid';
 import { MonsterAPI } from './APIs/monsterAPI';
+import { CharacterAPI } from './APIs/characterAPI';
 import React, { useEffect } from 'react';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 
 export type character = {
-    first_name: string;
-    last_name: string;
     id: string;
+    name: string;
+    ac: number;
+    level: number;
+    race: string;
+    class: string;
+    con: number;
+    conMod: number;
+    str: number;
+    strMod: number;
+    dex: number;
+    dexMod: number;
+    int: number;
+    intMod: number;
+    wis: number;
+    wisMod: number;
+    cha: number;
+    chaMod: number;
+    hp: number;
     abilities: string[];
 }
 
@@ -32,6 +49,7 @@ export type monster = {
     cha: number;
     chaMod: number;
     hp: number;
+    abilities: string[];
 }
 
 type itemTypes = 'Weapon' | 'Armor';
@@ -60,48 +78,41 @@ type ItemsSliceState = {
 }
 
 // move starters into a diff file
-const starterChars: character[] = [
-    { first_name: 'Tyler', last_name: 'Robison', abilities: ['Heal', 'Protect'], id: uuid() },
-    { first_name: 'Will', last_name: 'Green', abilities: ['Berserk'], id: uuid() },
-]
+// const starterChars: character[] = [
+//     { first_name: 'Tyler', last_name: 'Robison', abilities: ['Heal', 'Protect'], id: uuid() },
+//     { first_name: 'Will', last_name: 'Green', abilities: ['Berserk'], id: uuid() },
+// ]
 
-let starterMonsters: any;
+// let starterMonsters: any;
 
-
-
-
-export const getStarterDataThunk = async () => {
-
-    starterMonsters = await MonsterAPI.findAll()
-
-}
-
-// const fillMonsterThunk = createAsyncThunk(
-//     'monsters/fillMonsters2',
-//     async () => {
-//         return MonsterAPI.findAll();
-//     }
-// )
-
+// export const getStarterDataThunk = async () => {
+//     starterMonsters = await MonsterAPI.findAll()
+// }
 
 const starterItems: item[] = [
     { name: 'Long Sword', type: 'Weapon', attack: '1d8', value: '50', id: uuid() },
     { name: 'Buckler', type: 'Armor', armor: '2', value: '30', id: uuid() },
-
 ]
 
 const initialCharacterState: CharactersSliceState = {
-    characters: starterChars
+    characters: []
 }
 
 const initialMonsterState: MonstersSliceState = {
     monsters: []
 }
-console.log('init mon', initialMonsterState)
 
 const initialItemState: ItemsSliceState = {
     items: starterItems
 }
+
+export const fillCharacterThunk = createAsyncThunk(
+    // what is the purpose of this string?
+    'characters/fillCharacterThunk',
+    async () => {
+        return await CharacterAPI.findAll();
+    }
+)
 
 export const charactersSlice = createSlice({
     name: 'characters',
@@ -110,10 +121,26 @@ export const charactersSlice = createSlice({
         addCharacter: (state, action: PayloadAction<character>) => {
             state.characters = [
                 ...state.characters, {
-                    first_name: action.payload.first_name,
-                    last_name: action.payload.last_name,
-                    abilities: action.payload.abilities,
-                    id: action.payload.id
+                    id: action.payload.id,
+                    name: action.payload.name,
+                    ac: action.payload.ac,
+                    level: action.payload.level,
+                    class: action.payload.class,
+                    race: action.payload.race,
+                    con: action.payload.con,
+                    conMod: action.payload.conMod,
+                    str: action.payload.str,
+                    strMod: action.payload.strMod,
+                    dex: action.payload.dex,
+                    dexMod: action.payload.dexMod,
+                    int: action.payload.int,
+                    intMod: action.payload.intMod,
+                    wis: action.payload.wis,
+                    wisMod: action.payload.wisMod,
+                    cha: action.payload.cha,
+                    chaMod: action.payload.chaMod,
+                    hp: action.payload.hp,
+                    abilities: action.payload.abilities
                 }
             ]
         },
@@ -129,7 +156,19 @@ export const charactersSlice = createSlice({
                     action.payload : char);
             })
         },
-    }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(fillCharacterThunk.pending, (state, action) => {
+            // state.status = 'loading'
+        })
+        builder.addCase(fillCharacterThunk.fulfilled, (state, action) => {
+            state.characters = action.payload
+            // state.status = 'success'
+        })
+        builder.addCase(fillCharacterThunk.rejected, (state, action) => {
+            // state.status = 'loading'
+        })
+    },
 })
 
 export const fillMonsterThunk = createAsyncThunk(
@@ -144,9 +183,6 @@ export const monstersSlice = createSlice({
     name: 'monsters',
     initialState: initialMonsterState,
     reducers: {
-        fillMonsters: (state, action: PayloadAction<monster[]>) => {
-            state.monsters = [...action.payload];
-        },
         addMonster: (state, action: PayloadAction<monster>) => {
             state.monsters = [
                 ...state.monsters, {
@@ -168,7 +204,8 @@ export const monstersSlice = createSlice({
                     wisMod: action.payload.wisMod,
                     cha: action.payload.cha,
                     chaMod: action.payload.chaMod,
-                    hp: action.payload.hp
+                    hp: action.payload.hp,
+                    abilities: action.payload.abilities
                 }
             ]
         },
@@ -229,7 +266,7 @@ export const itemsSlice = createSlice({
 })
 
 export const { addCharacter, removeCharacter, editCharacter } = charactersSlice.actions;
-export const { addMonster, removeMonster, editMonster, fillMonsters } = monstersSlice.actions;
+export const { addMonster, removeMonster, editMonster } = monstersSlice.actions;
 export const { addItem, removeItem, editItem } = itemsSlice.actions;
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

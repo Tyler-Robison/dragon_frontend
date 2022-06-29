@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from 'react-router-dom';
-import { selectCharacters } from "../store";
+import { selectCharacters } from "../../store";
 import EditCharacterForm from "./EditCharacterForm";
 
 const CharacterDetail: React.FC = () => {
@@ -25,11 +25,10 @@ const CharacterDetail: React.FC = () => {
         <div>
             <div>
                 <button onClick={goBack}>Back</button>
-                <p> <b>First Name:</b> {character!.first_name}</p>
-                <p> <b>Last Name:</b> {character!.last_name}</p>
+                <p> <b>Name:</b> {character!.name}</p>
                 <button onClick={showEditForm}>Edit Character</button>
             </div>
-            {isEditFormShowing && <EditCharacterForm character={character!} setIsEditFormShowing={setIsEditFormShowing}/>}
+            {/* {isEditFormShowing && <EditCharacterForm character={character!} setIsEditFormShowing={setIsEditFormShowing}/>} */}
         </div>
     )
 }

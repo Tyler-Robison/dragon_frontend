@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { removeItem } from "../store";
+import { removeItem } from "../../store";
 import { Link } from 'react-router-dom';
 
 

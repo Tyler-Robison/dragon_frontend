@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../../store';
 import { useParams, useNavigate } from 'react-router-dom';
-import { selectMonsters } from "../store";
-import EditCharacterForm from "./EditCharacterForm";
+import { selectMonsters } from "../../store";
+import EditMonsterForm from "../characters/EditCharacterForm";
 
 const MonsterDetail: React.FC = () => {
     const { characterID } = useParams()
@@ -26,11 +26,16 @@ const MonsterDetail: React.FC = () => {
         <div>
             <div>
                 <button onClick={goBack}>Back</button>
-                <p> <b>First Name:</b> {monster!.first_name}</p>
-                <p> <b>Last Name:</b> {monster!.last_name}</p>
+                <p> <b>First Name:</b> {monster!.name}</p>
+                <p> <b>Last Name:</b> {monster!.hp}</p>
+                <ol>
+                    {monster?.abilities.map(ability => {
+                        return <li>{ability}</li>
+                    })}
+                </ol>
                 <button onClick={showEditForm}>Edit Character</button>
             </div>
-            {isEditFormShowing && <EditCharacterForm monster={monster!} setIsEditFormShowing={setIsEditFormShowing}/>}
+            {/* {isEditFormShowing && <EditMonsterForm monster={monster!} setIsEditFormShowing={setIsEditFormShowing}/>} */}
         </div>
     )
 }

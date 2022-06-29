@@ -2,9 +2,10 @@ import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import Home from './Home'
 import CIMList from "./CIMList";
-import CharacterDetail from "./CharacterDetail";
+import CharacterDetail from "./characters/CharacterDetail";
 import Creation from "./Creation";
 import CreationPartTwo from "./CreationPartTwo";
+import Battle from "./battle/Battle";
 
 /** RouteList Contains all routes used by Healthy-Eater app
  * 
@@ -25,6 +26,8 @@ const RouteList: React.FC = () => {
             <Route path="/characters" element={<CIMList itemType="char" />} />
             <Route path="/monsters" element={<CIMList itemType="monster" />} />
             <Route path="/items" element={<CIMList itemType="item" />} />
+            <Route path="/battle" element={<Battle />} />
+
 
             <Route path="/characters/:characterID" element={<CharacterDetail />} />
 

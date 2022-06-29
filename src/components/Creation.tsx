@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import CharacterCreationForm from "./CharacterForm";
-import MonsterCreationForm from "./MonsterForm";
+import CharacterCreationForm from "./characters/CharacterForm";
+import MonsterCreationForm from "./monsters/MonsterForm";
 import AbilityForm from "./AbilityForm";
 import { useFormik } from "formik";
 import { useNavigate } from 'react-router-dom';
