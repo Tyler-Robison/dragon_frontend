@@ -7,12 +7,12 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 
 export type character = {
-    id: string;
+    id: number;
     name: string;
     ac: number;
     level: number;
     race: string;
-    class: string;
+    creatureClass: string;
     con: number;
     conMod: number;
     str: number;
@@ -27,6 +27,7 @@ export type character = {
     chaMod: number;
     hp: number;
     abilities: string[];
+    initiative?: number; //can't seem to add later?
 }
 
 export type monster = {
@@ -50,6 +51,8 @@ export type monster = {
     chaMod: number;
     hp: number;
     abilities: string[];
+    creatureClass: 'Monster'
+    initiative?: number;   //can't seem to add later?
 }
 
 type itemTypes = 'Weapon' | 'Armor';
@@ -125,7 +128,7 @@ export const charactersSlice = createSlice({
                     name: action.payload.name,
                     ac: action.payload.ac,
                     level: action.payload.level,
-                    class: action.payload.class,
+                    creatureClass: action.payload.creatureClass,
                     race: action.payload.race,
                     con: action.payload.con,
                     conMod: action.payload.conMod,
@@ -144,7 +147,7 @@ export const charactersSlice = createSlice({
                 }
             ]
         },
-        removeCharacter: (state, action: PayloadAction<string>) => {
+        removeCharacter: (state, action: PayloadAction<number>) => {
             state.characters = state.characters.filter(char => {
                 return char.id !== action.payload
             })
@@ -162,6 +165,7 @@ export const charactersSlice = createSlice({
             // state.status = 'loading'
         })
         builder.addCase(fillCharacterThunk.fulfilled, (state, action) => {
+            console.log('thunk', action.payload)
             state.characters = action.payload
             // state.status = 'success'
         })
@@ -175,7 +179,11 @@ export const fillMonsterThunk = createAsyncThunk(
     // what is the purpose of this string?
     'monsters/fillMonsterThunk',
     async () => {
-        return await MonsterAPI.findAll();
+        const monsters = await MonsterAPI.findAll();
+        return monsters.map((m: monster) => {
+            m.creatureClass = 'Monster';
+            return m
+        })
     }
 )
 
@@ -205,7 +213,8 @@ export const monstersSlice = createSlice({
                     cha: action.payload.cha,
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
-                    abilities: action.payload.abilities
+                    abilities: action.payload.abilities,
+                    creatureClass: 'Monster'
                 }
             ]
         },

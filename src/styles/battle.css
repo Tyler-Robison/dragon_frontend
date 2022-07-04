@@ -12,3 +12,7 @@
     height: 800px;
     width: 400px;
 }
+
+.creature-div {
+    border: 1px solid black;
+}

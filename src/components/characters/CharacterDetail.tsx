@@ -11,7 +11,7 @@ const CharacterDetail: React.FC = () => {
     const [isEditFormShowing, setIsEditFormShowing] = useState<Boolean>(false);
     const navigate = useNavigate();
 
-    const character = characters.find(char => char.id === characterID);
+    const character = characters.find(char => char.id === +characterID!);
 
     const showEditForm = () => {
         setIsEditFormShowing(true);

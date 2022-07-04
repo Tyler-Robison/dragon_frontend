@@ -12,7 +12,7 @@ const CharCard: React.FC<CharCardProps> = ({ char }) => {
     const dispatch = useDispatch()
 
     const handleDelete = (id: string) => {
-        dispatch(removeCharacter(id));
+        dispatch(removeCharacter(+id));
     }
 
     return (
