@@ -33,7 +33,7 @@ const BattleForm: React.FC<BattleFormProps> = ({ monsters, characters, addActive
     // assign each creature random, unique initiative (0-100), used to determine turn order
     const assignTurnOrder = () => {
         while (true) {
-            const randomNum = Math.floor(Math.random() * 100) + 1;
+            const randomNum = Math.floor(Math.random() * 100);
             if (!turnArray.includes(randomNum)) {
                 setTurnArray([...turnArray, randomNum]);
                 return randomNum;

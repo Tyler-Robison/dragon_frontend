@@ -303,7 +303,8 @@ export const activeMonstersSlice = createSlice({
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
                     abilities: action.payload.abilities,
-                    creatureClass: 'Monster'
+                    creatureClass: 'Monster', 
+                    initiative: action.payload.initiative
                 }
             ]
         },
@@ -339,7 +340,8 @@ export const activeCharactersSlice = createSlice({
                     cha: action.payload.cha,
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
-                    abilities: action.payload.abilities
+                    abilities: action.payload.abilities, 
+                    initiative: action.payload.initiative
                 }
             ]
         },
