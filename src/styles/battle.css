@@ -16,3 +16,11 @@
 .creature-div {
     border: 1px solid black;
 }
+
+.Cell {
+    height: 60px;
+    width: 60px;
+    background-color: rgb(130, 130, 245);
+    cursor: pointer;
+    border: black 1px solid;
+}

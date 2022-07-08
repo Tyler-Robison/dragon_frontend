@@ -2,37 +2,43 @@ import React, { useState } from "react"
 import { useSelector } from "react-redux";
 import Creature from "../../models/Creature";
 import { selectCharacters, selectMonsters, selectItems, character, monster } from "../../store";
-import Monster from '../../models/Monster'
-import Character from '../../models/Character'
+import Character from './Character'
+import Monster from './Monster'
+
 
 interface BattleHalfProps {
-    combatants: Character[] | Monster[];
+    characters?: character[];
+    monsters?: monster[];
 }
 
-const BattleHalf: React.FC<BattleHalfProps> = ({ combatants }) => {
 
-    return (
+const BattleHalf: React.FC<BattleHalfProps> = ({ monsters, characters }) => {
+
+    if (monsters) return (
         <div className="BattleHalf">
-            {combatants.map(creature => {
-                // creature doesn't show class methods and "this" is undefined
-                // We do have access to methods, just can't see them. 
-                console.log('creature', creature)
-                console.log('this', this)
-                return <div
-
-                    onClick={creature.reportHP}
-                    className="creature-div" key={creature.initiative}>
-                    <p><b>{creature.name}</b></p>
-                    <p><b>HP: </b>{creature.hp}</p>
-                    {/* <ol>{creature.abilities.map(a => {
-                        return <li>{a}</li>
-                    })}</ol> */}
-
-                    {creature.creatureClass && <p><b>Class: </b>{creature.creatureClass}</p>}
-                </div>
-            })}
+            {monsters.map(m => <Monster
+                key={m.initiative}
+                name={m.name}
+                hp={m.hp}
+                abilities={m.abilities}
+                creatureClass={m.creatureClass}
+                challenge={m.challengeRating}
+            />
+            )}
         </div>
-
+    )
+    else return (
+        <div className="BattleHalf">
+            {characters!.map(c => <Character
+                key={c.initiative}
+                name={c.name}
+                hp={c.hp}
+                abilities={c.abilities}
+                creatureClass={c.creatureClass}
+                level={c.level}
+            />
+            )}
+        </div>
     )
 }
 

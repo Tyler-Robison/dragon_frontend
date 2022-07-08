@@ -1,20 +1,20 @@
 import { character, monster } from "../../store";
 import { useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
-import Monster from '../../models/Monster'
-import Character from '../../models/Character'
-import Creature from "../../models/Creature";
+import { useDispatch } from "react-redux";
 
 interface BattleFormProps {
     monsters: monster[];
     characters: character[];
-    setActiveCharacters: Dispatch<SetStateAction<Character[]>>;
-    setActiveMonsters: Dispatch<SetStateAction<Monster[]>>;
+    addActiveCharacter: any;
+    addActiveMonster: any
     turnArray: any; //change from any
     setTurnArray: any;
 }
 
-const BattleForm: React.FC<BattleFormProps> = ({ monsters, characters, setActiveCharacters, setActiveMonsters, turnArray, setTurnArray }) => {
+const BattleForm: React.FC<BattleFormProps> = ({ monsters, characters, addActiveCharacter, addActiveMonster, turnArray, setTurnArray }) => {
+
+    const dispatch = useDispatch()
 
     const characterFormik = useFormik({
         initialValues: {
@@ -40,64 +40,40 @@ const BattleForm: React.FC<BattleFormProps> = ({ monsters, characters, setActive
             }
         }
     }
-    // type creature = {
-    //     id: number,
-    //     hp: number,
-    //     ac: number,
-    //     str: number,
-    //     strMod: number,
-    //     dex: number,
-    //     dexMod: number,
-    //     con: number,
-    //     conMod: number,
-    //     int: number,
-    //     intMod: number,
-    //     wis: number,
-    //     wisMod: number,
-    //     cha: number,
-    //     chaMod: number,
-    //     creatureClass: string,
-    //     name: string,
-    //     initiative: number
-    // }
+
     const selectCharacter = (values: any) => {
 
         const { characterSelect } = values;
 
         let selected = characters.find(c => c.name === characterSelect);
-        const { level, race } = selected!
 
         selected = JSON.parse(JSON.stringify(selected));
         selected!.initiative = assignTurnOrder();
 
-        // @ts-expect-error -> fix!!!!!!!
-        const newCharacter = new Character(race, level, new Creature(selected!))
-        newCharacter.reportHP();
-
-        setActiveCharacters(prevState => [...prevState, newCharacter!])
+        dispatch(addActiveCharacter(selected))
+        // setActiveCharacters(prevState => [...prevState, selected!])
 
         characterFormik.resetForm();
     }
 
     const selectMonster = (monster: string) => {
         let selected = monsters.find(m => m.name === monster);
-        const { challengeRating } = selected!
         selected = JSON.parse(JSON.stringify(selected));
         selected!.initiative = assignTurnOrder();
 
-        // @ts-expect-error -> fix!!!!!!!
-        const newMonster = new Monster(challengeRating, new Creature(selected!))
-
-        setActiveMonsters(prevState => [...prevState, newMonster!])
+        dispatch(addActiveMonster(selected))
 
         monsterFormik.resetForm();
     }
 
-    // const races: string[] = ['Human', 'Tiefling', 'Dwarf', 'Elf'];
-    // const levels: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const addInitiative = (selected: monster | character) => {
+        selected = JSON.parse(JSON.stringify(selected));
+        selected!.initiative = assignTurnOrder();
+        return selected
+    }
+
+
     const characterValues = characters.map(c => <option key={c.id} value={c.name}>{c.name}</option>);
-    // const raceValues = races.map(r => <option key={r} value={r}>{r}</option>);
-    // const levelValues = levels.map(l => <option key={l} value={l}>{l}</option>)
     const monsterValues = monsters.map(m => <option key={m.id} value={m.name}>{m.name}</option>);
 
     return (
@@ -112,22 +88,6 @@ const BattleForm: React.FC<BattleFormProps> = ({ monsters, characters, setActive
                     onChange={characterFormik.handleChange}
                     onBlur={characterFormik.handleBlur}
                 >{characterValues}</select>
-
-                {/* <label htmlFor="raceSelect">Race</label>
-                <select
-                    id="raceSelect"
-                    name="raceSelect"
-                    onChange={characterFormik.handleChange}
-                    onBlur={characterFormik.handleBlur}
-                >{raceValues}</select>
-
-                <label htmlFor="levelSelect">Level</label>
-                <select
-                    id="levelSelect"
-                    name="levelSelect"
-                    onChange={characterFormik.handleChange}
-                    onBlur={characterFormik.handleBlur}
-                >{levelValues}</select> */}
 
                 <button type="submit">Add Character</button>
             </form>

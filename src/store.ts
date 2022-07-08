@@ -2,7 +2,6 @@ import { configureStore, createSlice, PayloadAction, createAsyncThunk } from '@r
 import { v4 as uuid } from 'uuid';
 import { MonsterAPI } from './APIs/monsterAPI';
 import { CharacterAPI } from './APIs/characterAPI';
-import React, { useEffect } from 'react';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 
@@ -76,21 +75,17 @@ type MonstersSliceState = {
     monsters: monster[];
 }
 
+type ActiveMonstersSliceState = {
+    monsters: monster[];
+}
+
+type ActiveCharactersSliceState = {
+    characters: character[];
+}
+
 type ItemsSliceState = {
     items: item[];
 }
-
-// move starters into a diff file
-// const starterChars: character[] = [
-//     { first_name: 'Tyler', last_name: 'Robison', abilities: ['Heal', 'Protect'], id: uuid() },
-//     { first_name: 'Will', last_name: 'Green', abilities: ['Berserk'], id: uuid() },
-// ]
-
-// let starterMonsters: any;
-
-// export const getStarterDataThunk = async () => {
-//     starterMonsters = await MonsterAPI.findAll()
-// }
 
 const starterItems: item[] = [
     { name: 'Long Sword', type: 'Weapon', attack: '1d8', value: '50', id: uuid() },
@@ -103,6 +98,14 @@ const initialCharacterState: CharactersSliceState = {
 
 const initialMonsterState: MonstersSliceState = {
     monsters: []
+}
+
+const initialActiveMonsterState: ActiveMonstersSliceState = {
+    monsters: []
+}
+
+const initialActiveCharacterState: ActiveCharactersSliceState = {
+    characters: []
 }
 
 const initialItemState: ItemsSliceState = {
@@ -176,7 +179,6 @@ export const charactersSlice = createSlice({
 })
 
 export const fillMonsterThunk = createAsyncThunk(
-    // what is the purpose of this string?
     'monsters/fillMonsterThunk',
     async () => {
         const monsters = await MonsterAPI.findAll();
@@ -246,7 +248,7 @@ export const monstersSlice = createSlice({
 
 // how to make properties optional?????????????????????
 export const itemsSlice = createSlice({
-    name: 'item',
+    name: 'items',
     initialState: initialItemState,
     reducers: {
         addItem: (state, action: PayloadAction<item>) => {
@@ -274,9 +276,84 @@ export const itemsSlice = createSlice({
     }
 })
 
+export const activeMonstersSlice = createSlice({
+    name: 'activeMonsters',
+    initialState: initialActiveMonsterState,
+    reducers: {
+        addActiveMonster: (state, action: PayloadAction<monster>) => {
+            state.monsters = [
+                ...state.monsters, {
+                    id: action.payload.id,
+                    name: action.payload.name,
+                    ac: action.payload.ac,
+                    acType: action.payload.acType,
+                    challengeRating: action.payload.challengeRating,
+                    challengeXP: action.payload.challengeXP,
+                    con: action.payload.con,
+                    conMod: action.payload.conMod,
+                    str: action.payload.str,
+                    strMod: action.payload.strMod,
+                    dex: action.payload.dex,
+                    dexMod: action.payload.dexMod,
+                    int: action.payload.int,
+                    intMod: action.payload.intMod,
+                    wis: action.payload.wis,
+                    wisMod: action.payload.wisMod,
+                    cha: action.payload.cha,
+                    chaMod: action.payload.chaMod,
+                    hp: action.payload.hp,
+                    abilities: action.payload.abilities,
+                    creatureClass: 'Monster'
+                }
+            ]
+        },
+        removeActiveMonster: (state, action: PayloadAction<number>) => {
+            state.monsters = state.monsters.filter(monst => monst.id !== action.payload)
+        },
+    }
+})
+
+export const activeCharactersSlice = createSlice({
+    name: 'activeCharacters',
+    initialState: initialActiveCharacterState,
+    reducers: {
+        addActiveCharacter: (state, action: PayloadAction<character>) => {
+            state.characters = [
+                ...state.characters, {
+                    id: action.payload.id,
+                    name: action.payload.name,
+                    ac: action.payload.ac,
+                    level: action.payload.level,
+                    creatureClass: action.payload.creatureClass,
+                    race: action.payload.race,
+                    con: action.payload.con,
+                    conMod: action.payload.conMod,
+                    str: action.payload.str,
+                    strMod: action.payload.strMod,
+                    dex: action.payload.dex,
+                    dexMod: action.payload.dexMod,
+                    int: action.payload.int,
+                    intMod: action.payload.intMod,
+                    wis: action.payload.wis,
+                    wisMod: action.payload.wisMod,
+                    cha: action.payload.cha,
+                    chaMod: action.payload.chaMod,
+                    hp: action.payload.hp,
+                    abilities: action.payload.abilities
+                }
+            ]
+        },
+        removeActiveCharacter: (state, action: PayloadAction<number>) => {
+            state.characters = state.characters.filter(c  => c.id !== action.payload)
+        },
+    }
+})
+
 export const { addCharacter, removeCharacter, editCharacter } = charactersSlice.actions;
 export const { addMonster, removeMonster, editMonster } = monstersSlice.actions;
 export const { addItem, removeItem, editItem } = itemsSlice.actions;
+export const { addActiveMonster, removeActiveMonster } = activeMonstersSlice.actions
+export const { addActiveCharacter, removeActiveCharacter } = activeCharactersSlice.actions
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
@@ -290,11 +367,15 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 export const selectCharacters = (state: RootState) => state.characters.characters;
 export const selectMonsters = (state: RootState) => state.monsters.monsters;
 export const selectItems = (state: RootState) => state.items.items;
+export const selectActiveCharacters = (state: RootState) => state.activeCharacters.characters;
+export const selectActiveMonsters = (state: RootState) => state.activeMonsters.monsters;
 
 export const store = configureStore({
     reducer: {
         characters: charactersSlice.reducer,
         monsters: monstersSlice.reducer,
-        items: itemsSlice.reducer
+        items: itemsSlice.reducer,
+        activeMonsters: activeMonstersSlice.reducer, 
+        activeCharacters: activeCharactersSlice.reducer
     },
 })

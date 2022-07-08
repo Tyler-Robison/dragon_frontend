@@ -43,7 +43,7 @@ const NavBar: React.FC = () => {
                     Creation
                 </NavLink>
 
-                <NavLink className="nav-link" to="/battle">
+                <NavLink className="nav-link" to="/planner">
                     Battle
                 </NavLink>
 
