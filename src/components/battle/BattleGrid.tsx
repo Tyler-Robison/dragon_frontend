@@ -32,6 +32,29 @@ const BattleGrid: React.FC = () => {
         dispatch(assignMonsterInitAndLoc(activeMonsters))
     }, [])
 
+    console.log('outer turn', turn)
+    const handleClick = (count: number) => {
+
+        const len = activeCharacters.length + activeMonsters.length - 1
+
+        // turn is ALWAYS 0 here, this is why useEffect has to handle conditional logic
+        console.log('turn', turn)
+        if (turn < len) {
+            setTurn(prevTurn => prevTurn + 1)
+        }
+
+        else {
+            setTurn(() => 0)
+        }
+    }
+
+    useEffect(() => {
+        if (turn > activeCharacters.length + activeMonsters.length - 1) {
+            setTurn(() => 0)
+        }
+    }, [turn])
+
+
     const generateGrid = () => {
         const initialGrid = [];
         let count = 0;
@@ -52,8 +75,8 @@ const BattleGrid: React.FC = () => {
                 }
                 row.push(<Cell key={count}
                     count={count}
-                    handleClick={() => handleClick(count)}
                     creature={creature!}
+                    handleClick={handleClick}
                 />
                 )
                 count++;
@@ -78,9 +101,9 @@ const BattleGrid: React.FC = () => {
     }, [activeCharacters, activeMonsters])
 
 
-    const handleClick = (count: number) => {
 
-    }
+
+
 
     const goBack = () => {
         navigate(-1);
@@ -95,16 +118,16 @@ const BattleGrid: React.FC = () => {
                 <tbody>{grid}</tbody>
             </table>
             <div>
+                <button onClick={() => handleClick(5)}>Test</button>
                 <p>Turn Order</p>
                 {turnOrder.map((t, idx) => {
 
                     let creature: character | monster | undefined = activeCharacters.find(c => c.initiative === t);
                     if (!creature) creature = activeMonsters.find(m => m.initiative === t);
 
-                    return (idx === turn ? 
-                    <p className="current-turn" key={idx}>{idx + 1} {creature!.name}</p> :
-                    <p key={idx}>{idx + 1} {creature!.name}</p>)
-                    return 
+                    return (idx === turn ?
+                        <p className="current-turn" key={idx}>{idx + 1} {creature!.name}</p> :
+                        <p key={idx}>{idx + 1} {creature!.name}</p>)
 
                 })}
             </div>

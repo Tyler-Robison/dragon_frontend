@@ -218,7 +218,6 @@ export const charactersSlice = createSlice({
             // state.status = 'loading'
         })
         builder.addCase(fillCharacterThunk.fulfilled, (state, action) => {
-            console.log('thunk', action.payload)
             state.characters = action.payload
             // state.status = 'success'
         })

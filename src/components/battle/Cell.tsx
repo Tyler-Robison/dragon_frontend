@@ -43,8 +43,8 @@ const Cell: React.FC<CellProps> = ({ count, handleClick, creature }) => {
         else if (creature.creatureClass === 'Warlock') creatureImg = warlockImg;
     }
 
-    return (creatureImg ? <td className="Cell">{creatureImg}</td> : <td className="Cell">{count}</td>)
-    
+    return (creatureImg ? <td className="Cell"><div onClick={() => handleClick(count)}>{creatureImg}</div></td> : <td className="Cell">{count}</td>)
+
 }
 
 export default Cell;
