@@ -4,6 +4,7 @@ import Creature from "../../models/Creature";
 import { selectCharacters, selectMonsters, selectItems, character, monster } from "../../store";
 import Character from './Character'
 import Monster from './Monster'
+import { v4 as uuid } from 'uuid';
 
 
 interface BattleHalfProps {
@@ -17,7 +18,7 @@ const BattleHalf: React.FC<BattleHalfProps> = ({ monsters, characters }) => {
     if (monsters) return (
         <div className="BattleHalf">
             {monsters.map(m => <Monster
-                key={m.initiative}
+                key={uuid()}
                 name={m.name}
                 hp={m.hp}
                 abilities={m.abilities}
@@ -30,7 +31,7 @@ const BattleHalf: React.FC<BattleHalfProps> = ({ monsters, characters }) => {
     else return (
         <div className="BattleHalf">
             {characters!.map(c => <Character
-                key={c.initiative}
+                key={uuid()}
                 name={c.name}
                 hp={c.hp}
                 abilities={c.abilities}

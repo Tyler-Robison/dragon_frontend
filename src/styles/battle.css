@@ -24,3 +24,13 @@
     cursor: pointer;
     border: black 1px solid;
 }
+
+.Bold {
+    border: 5px solid red;
+}
+
+.current-turn {
+    color: red;
+    font-weight: 900;
+    text-decoration: underline;
+}

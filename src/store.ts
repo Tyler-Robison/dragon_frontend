@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { MonsterAPI } from './APIs/monsterAPI';
 import { CharacterAPI } from './APIs/characterAPI';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import { act } from 'react-dom/test-utils';
 
 
 export type character = {
@@ -26,7 +27,31 @@ export type character = {
     chaMod: number;
     hp: number;
     abilities: string[];
-    initiative?: number; //can't seem to add later?
+}
+
+export type activeCharacter = {
+    id: number;
+    name: string;
+    ac: number;
+    level: number;
+    race: string;
+    creatureClass: string;
+    con: number;
+    conMod: number;
+    str: number;
+    strMod: number;
+    dex: number;
+    dexMod: number;
+    int: number;
+    intMod: number;
+    wis: number;
+    wisMod: number;
+    cha: number;
+    chaMod: number;
+    hp: number;
+    abilities: string[];
+    initiative: number;
+    location: number;
 }
 
 export type monster = {
@@ -51,7 +76,32 @@ export type monster = {
     hp: number;
     abilities: string[];
     creatureClass: 'Monster'
-    initiative?: number;   //can't seem to add later?
+}
+
+export type activeMonster = {
+    id: number;
+    name: string;
+    ac: number;
+    acType: string;
+    challengeRating: number;
+    challengeXP: number;
+    con: number;
+    conMod: number;
+    str: number;
+    strMod: number;
+    dex: number;
+    dexMod: number;
+    int: number;
+    intMod: number;
+    wis: number;
+    wisMod: number;
+    cha: number;
+    chaMod: number;
+    hp: number;
+    abilities: string[];
+    creatureClass: 'Monster'
+    initiative: number;   //can't seem to add later?
+    location: number;
 }
 
 type itemTypes = 'Weapon' | 'Armor';
@@ -76,11 +126,11 @@ type MonstersSliceState = {
 }
 
 type ActiveMonstersSliceState = {
-    monsters: monster[];
+    activeMonsters: activeMonster[];
 }
 
 type ActiveCharactersSliceState = {
-    characters: character[];
+    activeCharacters: activeCharacter[];
 }
 
 type ItemsSliceState = {
@@ -101,11 +151,11 @@ const initialMonsterState: MonstersSliceState = {
 }
 
 const initialActiveMonsterState: ActiveMonstersSliceState = {
-    monsters: []
+    activeMonsters: []
 }
 
 const initialActiveCharacterState: ActiveCharactersSliceState = {
-    characters: []
+    activeCharacters: []
 }
 
 const initialItemState: ItemsSliceState = {
@@ -276,13 +326,25 @@ export const itemsSlice = createSlice({
     }
 })
 
+const generateRandomNums = (length: number) => {
+    const outputArr: number[] = []
+    while (length > 0) {
+        const randomNum = Math.floor(Math.random() * 100);
+        if (!outputArr.includes(randomNum)) {
+            outputArr.push(randomNum);
+            length--;
+        }
+    }
+    return outputArr;
+}
+
 export const activeMonstersSlice = createSlice({
     name: 'activeMonsters',
     initialState: initialActiveMonsterState,
     reducers: {
-        addActiveMonster: (state, action: PayloadAction<monster>) => {
-            state.monsters = [
-                ...state.monsters, {
+        addActiveMonster: (state, action: PayloadAction<activeMonster>) => {
+            state.activeMonsters = [
+                ...state.activeMonsters, {
                     id: action.payload.id,
                     name: action.payload.name,
                     ac: action.payload.ac,
@@ -303,14 +365,37 @@ export const activeMonstersSlice = createSlice({
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
                     abilities: action.payload.abilities,
-                    creatureClass: 'Monster', 
-                    initiative: action.payload.initiative
+                    creatureClass: 'Monster',
+                    initiative: action.payload.initiative,
+                    location: action.payload.location
                 }
             ]
         },
         removeActiveMonster: (state, action: PayloadAction<number>) => {
-            state.monsters = state.monsters.filter(monst => monst.id !== action.payload)
+            state.activeMonsters = state.activeMonsters.filter(monst => monst.id !== action.payload)
         },
+        moveMonster: (state, action: PayloadAction<{ id: number, location: number }>) => {
+            state.activeMonsters = state.activeMonsters.map(m => {
+                if (m.id === action.payload.id) m.location = action.payload.location
+                return m
+            })
+        },
+        assignMonsterInitAndLoc: (state, action: PayloadAction<activeMonster[]>) => {
+            const locationArray = generateRandomNums(action.payload.length);
+            const initiativeArray = generateRandomNums(action.payload.length);
+
+            let { payload } = action
+         
+            payload = JSON.parse(JSON.stringify(payload));
+
+            const modifiedMonsters = payload.map((m, idx) => {
+                m.location = locationArray[idx];
+                m.initiative = initiativeArray[idx];
+                return m;
+            })
+
+            state.activeMonsters = modifiedMonsters;
+        }
     }
 })
 
@@ -318,9 +403,9 @@ export const activeCharactersSlice = createSlice({
     name: 'activeCharacters',
     initialState: initialActiveCharacterState,
     reducers: {
-        addActiveCharacter: (state, action: PayloadAction<character>) => {
-            state.characters = [
-                ...state.characters, {
+        addActiveCharacter: (state, action: PayloadAction<activeCharacter>) => {
+            state.activeCharacters = [
+                ...state.activeCharacters, {
                     id: action.payload.id,
                     name: action.payload.name,
                     ac: action.payload.ac,
@@ -340,22 +425,44 @@ export const activeCharactersSlice = createSlice({
                     cha: action.payload.cha,
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
-                    abilities: action.payload.abilities, 
-                    initiative: action.payload.initiative
+                    abilities: action.payload.abilities,
+                    initiative: action.payload.initiative,
+                    location: action.payload.location
                 }
             ]
         },
         removeActiveCharacter: (state, action: PayloadAction<number>) => {
-            state.characters = state.characters.filter(c  => c.id !== action.payload)
+            state.activeCharacters = state.activeCharacters.filter(c => c.id !== action.payload)
         },
+        moveCharacter: (state, action: PayloadAction<{ id: number, location: number }>) => {
+            state.activeCharacters = state.activeCharacters.map(c => {
+                if (c.id === action.payload.id) c.location = action.payload.location
+                return c
+            })
+        },
+        assignCharacterInitAndLoc: (state, action: PayloadAction<activeCharacter[]>) => {
+            const locationArray = generateRandomNums(action.payload.length);
+            const initiativeArray = generateRandomNums(action.payload.length);
+            let { payload } = action
+         
+            payload = JSON.parse(JSON.stringify(payload));
+
+            const modifiedCharacters = payload.map((c, idx) => {
+                c.location = locationArray[idx];
+                c.initiative = initiativeArray[idx];
+                return c;
+            })
+
+            state.activeCharacters = modifiedCharacters;
+        }
     }
 })
 
 export const { addCharacter, removeCharacter, editCharacter } = charactersSlice.actions;
 export const { addMonster, removeMonster, editMonster } = monstersSlice.actions;
 export const { addItem, removeItem, editItem } = itemsSlice.actions;
-export const { addActiveMonster, removeActiveMonster } = activeMonstersSlice.actions
-export const { addActiveCharacter, removeActiveCharacter } = activeCharactersSlice.actions
+export const { addActiveMonster, removeActiveMonster, moveMonster, assignMonsterInitAndLoc } = activeMonstersSlice.actions
+export const { addActiveCharacter, removeActiveCharacter, moveCharacter, assignCharacterInitAndLoc } = activeCharactersSlice.actions
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
@@ -369,15 +476,15 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 export const selectCharacters = (state: RootState) => state.characters.characters;
 export const selectMonsters = (state: RootState) => state.monsters.monsters;
 export const selectItems = (state: RootState) => state.items.items;
-export const selectActiveCharacters = (state: RootState) => state.activeCharacters.characters;
-export const selectActiveMonsters = (state: RootState) => state.activeMonsters.monsters;
+export const selectActiveCharacters = (state: RootState) => state.activeCharacters.activeCharacters;
+export const selectActiveMonsters = (state: RootState) => state.activeMonsters.activeMonsters;
 
 export const store = configureStore({
     reducer: {
         characters: charactersSlice.reducer,
         monsters: monstersSlice.reducer,
         items: itemsSlice.reducer,
-        activeMonsters: activeMonstersSlice.reducer, 
+        activeMonsters: activeMonstersSlice.reducer,
         activeCharacters: activeCharactersSlice.reducer
     },
 })

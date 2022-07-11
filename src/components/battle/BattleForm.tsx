@@ -1,6 +1,5 @@
 import { character, monster } from "../../store";
 import { useFormik } from "formik";
-import { Dispatch, SetStateAction } from "react";
 import { useDispatch } from "react-redux";
 
 interface BattleFormProps {
@@ -8,11 +7,9 @@ interface BattleFormProps {
     characters: character[];
     addActiveCharacter: any;
     addActiveMonster: any
-    turnArray: any; //change from any
-    setTurnArray: any;
 }
 
-const BattleForm: React.FC<BattleFormProps> = ({ monsters, characters, addActiveCharacter, addActiveMonster, turnArray, setTurnArray }) => {
+const BattleForm: React.FC<BattleFormProps> = ({ monsters, characters, addActiveCharacter, addActiveMonster }) => {
 
     const dispatch = useDispatch()
 
@@ -30,48 +27,18 @@ const BattleForm: React.FC<BattleFormProps> = ({ monsters, characters, addActive
         onSubmit: values => selectMonster(values.monsterSelect),
     })
 
-    // assign each creature random, unique initiative (0-100), used to determine turn order
-    const assignTurnOrder = () => {
-        while (true) {
-            const randomNum = Math.floor(Math.random() * 100);
-            if (!turnArray.includes(randomNum)) {
-                setTurnArray([...turnArray, randomNum]);
-                return randomNum;
-            }
-        }
-    }
-
     const selectCharacter = (values: any) => {
-
         const { characterSelect } = values;
-
-        let selected = characters.find(c => c.name === characterSelect);
-
-        selected = JSON.parse(JSON.stringify(selected));
-        selected!.initiative = assignTurnOrder();
-
+        const selected = characters.find(c => c.name === characterSelect);
         dispatch(addActiveCharacter(selected))
-        // setActiveCharacters(prevState => [...prevState, selected!])
-
         characterFormik.resetForm();
     }
 
     const selectMonster = (monster: string) => {
-        let selected = monsters.find(m => m.name === monster);
-        selected = JSON.parse(JSON.stringify(selected));
-        selected!.initiative = assignTurnOrder();
-
+        const selected = monsters.find(m => m.name === monster);
         dispatch(addActiveMonster(selected))
-
         monsterFormik.resetForm();
     }
-
-    const addInitiative = (selected: monster | character) => {
-        selected = JSON.parse(JSON.stringify(selected));
-        selected!.initiative = assignTurnOrder();
-        return selected
-    }
-
 
     const characterValues = characters.map(c => <option key={c.id} value={c.name}>{c.name}</option>);
     const monsterValues = monsters.map(m => <option key={m.id} value={m.name}>{m.name}</option>);

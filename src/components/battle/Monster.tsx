@@ -12,7 +12,6 @@ interface MonsterProps {
 
 const Monster: React.FC<MonsterProps> = ({ name, hp, abilities, creatureClass, challenge }) => {
 
-    console.log('class', creatureClass)
     return (
         <div className="creature-div">
             <p><b>{name}</b></p>

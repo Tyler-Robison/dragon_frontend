@@ -11,7 +11,7 @@ interface CharacterProps {
 
 const Character: React.FC<CharacterProps> = ({ name, hp, abilities, creatureClass, level }) => {
 
-    console.log('class', creatureClass)
+    // console.log('class', creatureClass)
     return (
         <div className="creature-div">
             <p><b>{name}</b></p>

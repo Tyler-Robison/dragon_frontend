@@ -18,13 +18,13 @@ const BattlePlanner: React.FC = () => {
     // const [activeCharacters, setActiveCharacters] = useState<character[]>([]);
     // const [activeMonsters, setActiveMonsters] = useState<monster[]>([]);
     const [isStarted, setIsStarted] = useState<boolean>(false);
-    const [turnArray, setTurnArray] = useState<number[]>([])
+    
 
     const startBattle = () => {
         navigate('/battle')
     }
 
-    console.log('active', activeMonsters)
+    // console.log('active', activeMonsters)
 
     return (
         <div>
@@ -39,8 +39,6 @@ const BattlePlanner: React.FC = () => {
                 monsters={monsters}
                 addActiveCharacter={addActiveCharacter}
                 addActiveMonster={addActiveMonster}
-                turnArray={turnArray}
-                setTurnArray={setTurnArray}
             />
         </div>
     )
