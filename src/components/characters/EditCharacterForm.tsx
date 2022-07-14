@@ -12,45 +12,45 @@ interface EditCharacterFormProps {
 }
 
 const EditCharacterForm: React.FC<EditCharacterFormProps> = ({ character, setIsEditFormShowing }) => {
-    // const validate = editCharacterValidation;
-    // const dispatch = useDispatch()
+    const validate = editCharacterValidation;
+    const dispatch = useDispatch()
 
-    // // forwarding refs allow me to access them in parent
-    // const ref = React.useRef<HTMLInputElement>(null);
-    // console.log('outer ref', ref)
+    // forwarding refs allow me to access them in parent
+    const ref = React.useRef<HTMLInputElement>(null);
+    console.log('outer ref', ref)
 
-    // const boolArray = characterAbilities.map(ability => {
-    //     return character.abilities.includes(ability) ? true : false;
-    // })
+    const boolArray = characterAbilities.map(ability => {
+        return character.abilities.includes(ability) ? true : false;
+    })
     
-    // const [checkedState, setCheckedState] = useState<boolean[]>(boolArray)
+    const [checkedState, setCheckedState] = useState<boolean[]>(boolArray)
     
-    // const formik = useFormik({
-    //     initialValues: {
-    //         name: character.name,
-    //     },
-    //     validate,
-    //     onSubmit: values => formikEditCharacter(values),
-    // })
+    const formik = useFormik({
+        initialValues: {
+            name: character.name,
+        },
+        validate,
+        onSubmit: values => formikEditCharacter(values),
+    })
 
-    // // try/catch needed here? Shouldn't ever fail. 
-    // const formikEditCharacter = async (values: any) => {
-    //     try {
-    //         const newAbilities = characterAbilities.filter((ability, idx) => checkedState[idx])
+    // try/catch needed here? Shouldn't ever fail. 
+    const formikEditCharacter = async (values: any) => {
+        try {
+            const newAbilities = characterAbilities.filter((ability, idx) => checkedState[idx])
 
-    //         const editedCharacter: { name: string, abilities: string[] } = {
-    //             name: values.name,
-    //             abilities: newAbilities
-    //         };
+            const editedCharacter: { name: string, abilities: string[] } = {
+                name: values.name,
+                abilities: newAbilities
+            };
 
-    //         dispatch(editCharacter({ ...editedCharacter, id: character.id }))
-    //         setIsEditFormShowing(false);
-    //     } catch (err) {
-    //         formik.resetForm();
-    //         console.log('failed edit');
-    //         // import timedMsg and display fail msg here
-    //     }
-    // }
+            // dispatch(editCharacter({ ...editedCharacter, id: character.id }))
+            setIsEditFormShowing(false);
+        } catch (err) {
+            formik.resetForm();
+            console.log('failed edit');
+            // import timedMsg and display fail msg here
+        }
+    }
 
     // const myCheckBox = forwardRef((props, ref)) => {(
     //     return <input 
@@ -60,7 +60,7 @@ const EditCharacterForm: React.FC<EditCharacterFormProps> = ({ character, setIsE
 
     return (
         <div>
-            {/* <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit}>
                 <div>
                     <label htmlFor="name">Name</label>
                     <input
@@ -99,7 +99,7 @@ const EditCharacterForm: React.FC<EditCharacterFormProps> = ({ character, setIsE
 
                 <button className="general-btn LoginForm-btn" data-testid="character-creation-btn" type="submit">Edit Character</button>
 
-            </form> */}
+            </form>
 
         </div>
     )

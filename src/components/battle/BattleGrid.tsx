@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, SyntheticEvent } from "react";
 import Cell from "./Cell";
 import {
     selectActiveMonsters, selectActiveCharacters,
@@ -6,6 +6,7 @@ import {
 } from "../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import BattleChoices from "./BattleChoices";
 
 
 
@@ -19,11 +20,13 @@ const BattleGrid: React.FC = () => {
     const [turnOrder, setTurnOrder] = useState<number[]>([])
     const [turn, setTurn] = useState<number>(0)
     const dispatch = useDispatch()
+    const [chosenAction, setChosenAction] = useState<string | null>(null)
+    const [AP, setAP] = useState<number>(2); // action points determine how many actions you can take
 
     const navigate = useNavigate();
     const nrows = 10;
     const ncols = 10;
-    
+
 
     // Assign all active monsters/characters random + unique locations and initiative
     useEffect(() => {
@@ -31,17 +34,33 @@ const BattleGrid: React.FC = () => {
         dispatch(assignMonsterInitAndLoc(activeMonsters))
     }, [])
 
-    const handleClick = (count: number) => {
-        const len = activeCharacters.length + activeMonsters.length - 1;
+    const advanceTurn = () => {
+        const length = mergedArray.length - 1;
+        turn < length ? setTurn(prev => prev + 1) : setTurn(() => 0);
+    }
 
-        // if (turn < len) {
-        //     setTurn(prevTurn => prevTurn + 1)
-        // }
+    const handleClick = (count: number, creature: activeCharacter | activeMonster) => {
 
-        // else {
-        //     setTurn(() => 0)
-        // }
-        turn < len ? setTurn(prev=> prev + 1) : setTurn(() => 0);
+        console.log('crea', creature)
+
+
+        // continue turn rotation
+        advanceTurn()
+    }
+
+    const handleAction = (e: SyntheticEvent, action: string) => {
+
+        e.preventDefault();
+        if (action === 'move') {
+            console.log('you chose move')
+        }
+        else if (action === 'attack') {
+            console.log('you chose attack')
+        }
+        else if (action === 'pass') {
+            console.log('you chose pass')
+            advanceTurn();
+        }
     }
 
     const generateGrid = () => {
@@ -105,9 +124,9 @@ const BattleGrid: React.FC = () => {
                     return (idx === turn ?
                         <p className="Active" key={idx}>{idx + 1} {creature!.name}</p> :
                         <p key={idx}>{idx + 1} {creature!.name}</p>)
-
                 })}
             </div>
+            <BattleChoices activeCreatures={mergedArray} setChosenAction={setChosenAction} handleAction={handleAction} />
         </div>
     )
 }

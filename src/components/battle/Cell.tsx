@@ -35,8 +35,6 @@ const Cell: React.FC<CellProps> = ({ count, handleClick, creature, turnOrder, tu
 
     useEffect(() => {
         if (creature) {
-            console.log('effect turn', turn)
-            console.log('effect order', turnOrder)
             if (turnOrder[turn] === creature.initiative) {
                 setActive(() => true);
             }
@@ -61,7 +59,7 @@ const Cell: React.FC<CellProps> = ({ count, handleClick, creature, turnOrder, tu
 
     if (!creature) return <td className="Cell">{count}</td>
 
-    else if (active) return <td className="Cell Bold"><div onClick={() => handleClick(count)}>{creatureImg}</div></td>
+    else if (active) return <td className="Cell Bold"><div onClick={() => handleClick(count, creature)}>{creatureImg}</div></td>
 
     return <td className="Cell"><div>{creatureImg}</div></td>
 
