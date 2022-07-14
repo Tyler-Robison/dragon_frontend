@@ -15,18 +15,15 @@ const BattleGrid: React.FC = () => {
 
     const activeMonsters = useSelector(selectActiveMonsters)
     const activeCharacters = useSelector(selectActiveCharacters)
-    // 
+    const mergedArray = [...activeCharacters, ...activeMonsters]
     const [turnOrder, setTurnOrder] = useState<number[]>([])
     const [turn, setTurn] = useState<number>(0)
     const dispatch = useDispatch()
 
-    console.log('turn', turn)
-    console.log('order', turnOrder)
-
     const navigate = useNavigate();
     const nrows = 10;
     const ncols = 10;
-    const [grid, setGrid] = useState<any>([])
+    
 
     // Assign all active monsters/characters random + unique locations and initiative
     useEffect(() => {
@@ -34,38 +31,23 @@ const BattleGrid: React.FC = () => {
         dispatch(assignMonsterInitAndLoc(activeMonsters))
     }, [])
 
-    // console.log('outer turn', turn)
     const handleClick = (count: number) => {
-        console.log('handle turn', turn)
-        console.log('handle order', turnOrder)
+        const len = activeCharacters.length + activeMonsters.length - 1;
 
-        const len = activeCharacters.length + activeMonsters.length - 1
+        // if (turn < len) {
+        //     setTurn(prevTurn => prevTurn + 1)
+        // }
 
-        // turn is ALWAYS DEFAULT VALUE here, this is why useEffect has to handle conditional logic
-        // Can't get correct state for turn inside Cell component
-        if (turn < len) {
-            setTurn(prevTurn => prevTurn + 1)
-        }
-
-        else {
-            setTurn(() => 0)
-        }
+        // else {
+        //     setTurn(() => 0)
+        // }
+        turn < len ? setTurn(prev=> prev + 1) : setTurn(() => 0);
     }
 
-    // shouldn't need this for turns to work correctly
-    useEffect(() => {
-        if (turn > activeCharacters.length + activeMonsters.length - 1) {
-            setTurn(() => 0)
-        }
-    }, [turn])
-
-
-    // function closure issue?
     const generateGrid = () => {
         const initialGrid = [];
         let count = 0;
         const locations = [];
-        const mergedArray = [...activeCharacters, ...activeMonsters]
 
         for (let ele of mergedArray) {
             locations.push(ele.location)
@@ -92,11 +74,10 @@ const BattleGrid: React.FC = () => {
             }
             initialGrid.push(<tr key={y}>{row}</tr>);
         }
-        setGrid(initialGrid)
+        return initialGrid
     }
 
     useEffect(() => {
-        const mergedArray = [...activeCharacters, ...activeMonsters]
         const initialAccum: number[] = []
 
         const turnArray = mergedArray.reduce((accum, nextEle) => {
@@ -107,32 +88,18 @@ const BattleGrid: React.FC = () => {
         setTurnOrder(() => turnArray.sort((a, b) => b - a));
     }, [activeCharacters, activeMonsters])
 
-    useEffect(() => {
-        if (turnOrder.length) generateGrid();
-    }, [turnOrder])
-
-
-
-
-
-
-    const goBack = () => {
-        navigate(-1);
-    }
+    if (turnOrder.length === 0) return <p>Loading...</p>
 
     return (
         <div>
-
             <h1>Eliminate Monsters to Win!</h1>
-            <button onClick={goBack}>Go Back</button>
+            <button onClick={() => navigate(-1)}>Go Back</button>
             <table>
-                <tbody>{grid}</tbody>
+                <tbody>{generateGrid()}</tbody>
             </table>
             <div>
-                <button onClick={() => handleClick(5)}>Test</button>
                 <p>Turn Order</p>
                 {turnOrder.map((t, idx) => {
-                    const mergedArray = [...activeCharacters, ...activeMonsters]
                     const creature: activeCharacter | activeMonster | undefined = mergedArray.find(c => c.initiative === t);
 
                     return (idx === turn ?

@@ -35,8 +35,8 @@ const Cell: React.FC<CellProps> = ({ count, handleClick, creature, turnOrder, tu
 
     useEffect(() => {
         if (creature) {
-            console.log('turn', turn)
-            console.log('order', turnOrder)
+            console.log('effect turn', turn)
+            console.log('effect order', turnOrder)
             if (turnOrder[turn] === creature.initiative) {
                 setActive(() => true);
             }
