@@ -6,17 +6,22 @@ import warlock from '../../images/warlock.jpg'
 import rogue from '../../images/rogue.jpg'
 import wizard from '../../images/wizard.jpg'
 import cleric from '../../images/cleric.jpg'
-import { character, monster } from '../../store';
+import { activeCharacter, activeMonster } from '../../store';
+import React, { useState, useEffect } from "react";
 
 
 interface CellProps {
     count: number;
     handleClick: any;
-    creature: null | monster | character;
+    creature: null | activeCharacter | activeMonster | undefined;
+    turn: number
+    turnOrder: number[]
 }
 
 
-const Cell: React.FC<CellProps> = ({ count, handleClick, creature }) => {
+const Cell: React.FC<CellProps> = ({ count, handleClick, creature, turnOrder, turn }) => {
+
+    const [active, setActive] = useState<boolean>(false)
 
     const redDragonImg = <img src={redDragon}></img>
     const golemImg = <img src={golem}></img>
@@ -28,8 +33,19 @@ const Cell: React.FC<CellProps> = ({ count, handleClick, creature }) => {
 
     let creatureImg = null;
 
+    useEffect(() => {
+        if (creature) {
+            console.log('turn', turn)
+            console.log('order', turnOrder)
+            if (turnOrder[turn] === creature.initiative) {
+                setActive(() => true);
+            }
+            else setActive(() => false);
+        }
+    }, [turn])
 
-    if (creature !== null) {
+
+    if (creature !== null && creature !== undefined) {
 
         // monsters
         if (creature.name === 'Stone Golem') creatureImg = golemImg;
@@ -43,7 +59,11 @@ const Cell: React.FC<CellProps> = ({ count, handleClick, creature }) => {
         else if (creature.creatureClass === 'Warlock') creatureImg = warlockImg;
     }
 
-    return (creatureImg ? <td className="Cell"><div onClick={() => handleClick(count)}>{creatureImg}</div></td> : <td className="Cell">{count}</td>)
+    if (!creature) return <td className="Cell">{count}</td>
+
+    else if (active) return <td className="Cell Bold"><div onClick={() => handleClick(count)}>{creatureImg}</div></td>
+
+    return <td className="Cell"><div>{creatureImg}</div></td>
 
 }
 

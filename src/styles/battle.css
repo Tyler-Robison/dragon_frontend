@@ -29,7 +29,7 @@
     border: 5px solid red;
 }
 
-.current-turn {
+.Active {
     color: red;
     font-weight: 900;
     text-decoration: underline;

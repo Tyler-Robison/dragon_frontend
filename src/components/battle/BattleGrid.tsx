@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Cell from "./Cell";
 import {
-    selectCharacters, selectMonsters, selectItems, character, monster, selectActiveMonsters,
-    addActiveMonster, selectActiveCharacters, addActiveCharacter, moveCharacter, moveMonster,
-    assignCharacterInitAndLoc, assignMonsterInitAndLoc
+    selectActiveMonsters, selectActiveCharacters,
+    assignCharacterInitAndLoc, assignMonsterInitAndLoc, activeCharacter, activeMonster
 } from "../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -14,12 +13,15 @@ import { useNavigate } from "react-router-dom";
 // TODO: implement drag and drop via react-dnd
 const BattleGrid: React.FC = () => {
 
-    // gets activeChars, the
     const activeMonsters = useSelector(selectActiveMonsters)
     const activeCharacters = useSelector(selectActiveCharacters)
+    // 
     const [turnOrder, setTurnOrder] = useState<number[]>([])
     const [turn, setTurn] = useState<number>(0)
     const dispatch = useDispatch()
+
+    console.log('turn', turn)
+    console.log('order', turnOrder)
 
     const navigate = useNavigate();
     const nrows = 10;
@@ -32,13 +34,15 @@ const BattleGrid: React.FC = () => {
         dispatch(assignMonsterInitAndLoc(activeMonsters))
     }, [])
 
-    console.log('outer turn', turn)
+    // console.log('outer turn', turn)
     const handleClick = (count: number) => {
+        console.log('handle turn', turn)
+        console.log('handle order', turnOrder)
 
         const len = activeCharacters.length + activeMonsters.length - 1
 
-        // turn is ALWAYS 0 here, this is why useEffect has to handle conditional logic
-        console.log('turn', turn)
+        // turn is ALWAYS DEFAULT VALUE here, this is why useEffect has to handle conditional logic
+        // Can't get correct state for turn inside Cell component
         if (turn < len) {
             setTurn(prevTurn => prevTurn + 1)
         }
@@ -48,6 +52,7 @@ const BattleGrid: React.FC = () => {
         }
     }
 
+    // shouldn't need this for turns to work correctly
     useEffect(() => {
         if (turn > activeCharacters.length + activeMonsters.length - 1) {
             setTurn(() => 0)
@@ -55,6 +60,7 @@ const BattleGrid: React.FC = () => {
     }, [turn])
 
 
+    // function closure issue?
     const generateGrid = () => {
         const initialGrid = [];
         let count = 0;
@@ -70,18 +76,21 @@ const BattleGrid: React.FC = () => {
             for (let x = 0; x < ncols; x++) {
                 let creature = null;
                 if (locations.includes(count)) {
-                    creature = activeCharacters.find(ele => ele.location === count);
-                    if (!creature) creature = activeMonsters.find(ele => ele.location === count);
+                    creature = mergedArray.find(ele => ele.location === count);
                 }
-                row.push(<Cell key={count}
+
+                row.push(<Cell
+                    key={count}
                     count={count}
-                    creature={creature!}
+                    creature={creature}
                     handleClick={handleClick}
+                    turnOrder={turnOrder}
+                    turn={turn}
                 />
                 )
                 count++;
             }
-            initialGrid.push(<tr key={count}>{row}</tr>);
+            initialGrid.push(<tr key={y}>{row}</tr>);
         }
         setGrid(initialGrid)
     }
@@ -95,10 +104,12 @@ const BattleGrid: React.FC = () => {
             return accum;
         }, initialAccum)
 
-        setTurnOrder(() => turnArray.sort((a, b) => a - b))
-
-        generateGrid();
+        setTurnOrder(() => turnArray.sort((a, b) => b - a));
     }, [activeCharacters, activeMonsters])
+
+    useEffect(() => {
+        if (turnOrder.length) generateGrid();
+    }, [turnOrder])
 
 
 
@@ -121,12 +132,11 @@ const BattleGrid: React.FC = () => {
                 <button onClick={() => handleClick(5)}>Test</button>
                 <p>Turn Order</p>
                 {turnOrder.map((t, idx) => {
-
-                    let creature: character | monster | undefined = activeCharacters.find(c => c.initiative === t);
-                    if (!creature) creature = activeMonsters.find(m => m.initiative === t);
+                    const mergedArray = [...activeCharacters, ...activeMonsters]
+                    const creature: activeCharacter | activeMonster | undefined = mergedArray.find(c => c.initiative === t);
 
                     return (idx === turn ?
-                        <p className="current-turn" key={idx}>{idx + 1} {creature!.name}</p> :
+                        <p className="Active" key={idx}>{idx + 1} {creature!.name}</p> :
                         <p key={idx}>{idx + 1} {creature!.name}</p>)
 
                 })}
