@@ -398,7 +398,7 @@ export const activeMonstersSlice = createSlice({
             const initiativeArray = generateRandomNums(action.payload.length);
 
             let { payload } = action
-         
+
             payload = JSON.parse(JSON.stringify(payload));
 
             const modifiedMonsters = payload.map((m, idx) => {
@@ -408,6 +408,13 @@ export const activeMonstersSlice = createSlice({
             })
 
             state.activeMonsters = modifiedMonsters;
+        },
+        // TODO: removeMonster if hp <= 0
+        hitMonster: (state, action: PayloadAction<{ initiative: number, damage: number }>) => {
+            state.activeMonsters.map(m => {
+                if (m.initiative === action.payload.initiative) m.hp -= action.payload.damage;
+                return m
+            })
         }
     }
 })
@@ -457,7 +464,7 @@ export const activeCharactersSlice = createSlice({
             const locationArray = generateRandomCoords(action.payload.length);
             const initiativeArray = generateRandomNums(action.payload.length);
             let { payload } = action
-         
+
             payload = JSON.parse(JSON.stringify(payload));
 
             const modifiedCharacters = payload.map((c, idx) => {
@@ -467,6 +474,19 @@ export const activeCharactersSlice = createSlice({
             })
 
             state.activeCharacters = modifiedCharacters;
+        },
+        hitCharacter: (state, action: PayloadAction<{ initiative: number, damage: number }>) => {
+            let isDead = false;
+            state.activeCharacters = state.activeCharacters.map(c => {
+                if (c.initiative === action.payload.initiative) c.hp -= action.payload.damage;
+                if (c.hp <= 0) isDead = true
+                return c
+            })
+
+            if (isDead) {
+                console.log('dead')
+                state.activeCharacters = state.activeCharacters.filter(c => c.initiative !== action.payload.initiative);
+            }
         }
     }
 })
@@ -474,8 +494,8 @@ export const activeCharactersSlice = createSlice({
 export const { addCharacter, removeCharacter, editCharacter } = charactersSlice.actions;
 export const { addMonster, removeMonster, editMonster } = monstersSlice.actions;
 export const { addItem, removeItem, editItem } = itemsSlice.actions;
-export const { addActiveMonster, removeActiveMonster, moveMonster, assignMonsterInitAndLoc } = activeMonstersSlice.actions
-export const { addActiveCharacter, removeActiveCharacter, moveCharacter, assignCharacterInitAndLoc } = activeCharactersSlice.actions
+export const { addActiveMonster, removeActiveMonster, moveMonster, assignMonsterInitAndLoc, hitMonster } = activeMonstersSlice.actions
+export const { addActiveCharacter, removeActiveCharacter, moveCharacter, assignCharacterInitAndLoc, hitCharacter } = activeCharactersSlice.actions
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>

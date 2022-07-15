@@ -2,7 +2,7 @@ import React, { useState, useEffect, SyntheticEvent } from "react";
 import Cell from "./Cell";
 import {
     selectActiveMonsters, selectActiveCharacters,
-    assignCharacterInitAndLoc, assignMonsterInitAndLoc, activeCharacter, activeMonster, moveCharacter, moveMonster
+    assignCharacterInitAndLoc, assignMonsterInitAndLoc, activeCharacter, activeMonster, moveCharacter, moveMonster, hitMonster, hitCharacter
 } from "../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,8 @@ const BattleGrid: React.FC = () => {
     const [AP, setAP] = useState<number>(initialAP); // action points determine how many actions you can take
     const currentCreature = mergedArray.find(c => c.initiative === turnOrder[turn])
     const [invalidMoveMsg, setinvalidMoveMsg] = useTimedMessage(1500)
+    const [missMsg, setMissMsg] = useTimedMessage(1500)
+    const [hitMsg, setHitMsg] = useTimedMessage(1500)
     const navigate = useNavigate();
     const nrows = 10;
     const ncols = 10;
@@ -41,6 +43,7 @@ const BattleGrid: React.FC = () => {
     }
     const [colors, setColors] = useState(setInitialColors())
 
+    console.log('active', mergedArray)
 
     // Assign all active monsters/characters random + unique locations and initiative
     useEffect(() => {
@@ -83,16 +86,29 @@ const BattleGrid: React.FC = () => {
     const handleAttack = (coord: string, color: string) => {
         if (color === 'red' && !isEmpty(coord)) {
             const attackedCreature = mergedArray.find(creature => creature.location === coord);
+            const { initiative } = attackedCreature!
             const damage = calculateAttackDamage(currentCreature!)
             const hit = calculateHit(currentCreature!, attackedCreature!)
+
             if (hit === 'miss') {
+                setMissMsg(true);
 
-            } else if (hit === 'hit') {
+            }
 
-            } else if (hit === 'crit hit') {
+            else if (hit === 'hit') {
+                setHitMsg(true)
+                if ('level' in attackedCreature!) dispatch(hitCharacter({initiative, damage}))
+                else dispatch(hitMonster({ initiative, damage }))
+            }
 
-            } else if (hit === 'crit miss') {
+            else if (hit === 'crit hit') {
+                setHitMsg(true)
+                if ('level' in attackedCreature!) dispatch(hitCharacter({initiative, damage: damage * 2}))
+                else dispatch(hitMonster({ initiative, damage: damage * 2 }))
+            }
 
+            else if (hit === 'crit miss') {
+                setMissMsg(true)
             }
 
             setAP(currentVal => currentVal - 1);
@@ -226,6 +242,8 @@ const BattleGrid: React.FC = () => {
             <h1>Eliminate Monsters to Win!</h1>
             <h3>Action Points Remaining: {AP}</h3>
             {invalidMoveMsg && <h3>Can only move to empty green or red squares</h3>}
+            {missMsg && <h3>Missed!</h3>}
+            {hitMsg && <h3>Hit!</h3>}
             <button onClick={() => navigate(-1)}>Go Back</button>
             <table>
                 <tbody>{generateGrid()}</tbody>
