@@ -11,15 +11,17 @@ import React, { useState, useEffect } from "react";
 
 
 interface CellProps {
-    count: number;
+    coord: string;
     handleClick: any;
     creature: null | activeCharacter | activeMonster | undefined;
-    turn: number
-    turnOrder: number[]
+    turn: number;
+    turnOrder: number[];
+    color: string;
+    AP: number
 }
 
 
-const Cell: React.FC<CellProps> = ({ count, handleClick, creature, turnOrder, turn }) => {
+const Cell: React.FC<CellProps> = ({ handleClick, creature, turnOrder, turn, color = 'blue', coord, AP }) => {
 
     const [active, setActive] = useState<boolean>(false)
 
@@ -40,7 +42,7 @@ const Cell: React.FC<CellProps> = ({ count, handleClick, creature, turnOrder, tu
             }
             else setActive(() => false);
         }
-    }, [turn])
+    }, [turn, AP])
 
 
     if (creature !== null && creature !== undefined) {
@@ -57,11 +59,12 @@ const Cell: React.FC<CellProps> = ({ count, handleClick, creature, turnOrder, tu
         else if (creature.creatureClass === 'Warlock') creatureImg = warlockImg;
     }
 
-    if (!creature) return <td className="Cell">{count}</td>
+    if (!creature) return <td className={`Cell ${color}`}><div onClick={() => handleClick(coord, color)}>{coord}</div></td>
 
-    else if (active) return <td className="Cell Bold"><div onClick={() => handleClick(count, creature)}>{creatureImg}</div></td>
+    // coord and creature.location will always be the same
+    else if (active) return <td className={`Cell Bold ${color}`}><div onClick={() => handleClick(coord, color)}>{creatureImg}</div></td>
 
-    return <td className="Cell"><div>{creatureImg}</div></td>
+    return <td className={`Cell ${color}`}><div onClick={() => handleClick(coord, color)}>{creatureImg}</div></td>
 
 }
 

@@ -51,7 +51,7 @@ export type activeCharacter = {
     hp: number;
     abilities: string[];
     initiative: number;
-    location: number;
+    location: string;
 }
 
 export type monster = {
@@ -101,7 +101,7 @@ export type activeMonster = {
     abilities: string[];
     creatureClass: 'Monster'
     initiative: number;   //can't seem to add later?
-    location: number;
+    location: string;
 }
 
 type itemTypes = 'Weapon' | 'Armor';
@@ -337,6 +337,20 @@ const generateRandomNums = (length: number) => {
     return outputArr;
 }
 
+const generateRandomCoords = (length: number) => {
+    const outputArr: string[] = []
+    while (length > 0) {
+        const randomNumOne = Math.floor(Math.random() * 10);
+        const randomNumTwo = Math.floor(Math.random() * 10);
+        const coord = `${randomNumOne}-${randomNumTwo}`
+        if (!outputArr.includes(coord)) {
+            outputArr.push(coord);
+            length--;
+        }
+    }
+    return outputArr;
+}
+
 export const activeMonstersSlice = createSlice({
     name: 'activeMonsters',
     initialState: initialActiveMonsterState,
@@ -373,14 +387,14 @@ export const activeMonstersSlice = createSlice({
         removeActiveMonster: (state, action: PayloadAction<number>) => {
             state.activeMonsters = state.activeMonsters.filter(monst => monst.id !== action.payload)
         },
-        moveMonster: (state, action: PayloadAction<{ id: number, location: number }>) => {
+        moveMonster: (state, action: PayloadAction<{ initiative: number, coord: string }>) => {
             state.activeMonsters = state.activeMonsters.map(m => {
-                if (m.id === action.payload.id) m.location = action.payload.location
+                if (m.initiative === action.payload.initiative) m.location = action.payload.coord
                 return m
             })
         },
         assignMonsterInitAndLoc: (state, action: PayloadAction<activeMonster[]>) => {
-            const locationArray = generateRandomNums(action.payload.length);
+            const locationArray = generateRandomCoords(action.payload.length);
             const initiativeArray = generateRandomNums(action.payload.length);
 
             let { payload } = action
@@ -433,14 +447,14 @@ export const activeCharactersSlice = createSlice({
         removeActiveCharacter: (state, action: PayloadAction<number>) => {
             state.activeCharacters = state.activeCharacters.filter(c => c.id !== action.payload)
         },
-        moveCharacter: (state, action: PayloadAction<{ id: number, location: number }>) => {
+        moveCharacter: (state, action: PayloadAction<{ initiative: number, coord: string }>) => {
             state.activeCharacters = state.activeCharacters.map(c => {
-                if (c.id === action.payload.id) c.location = action.payload.location
+                if (c.initiative === action.payload.initiative) c.location = action.payload.coord
                 return c
             })
         },
         assignCharacterInitAndLoc: (state, action: PayloadAction<activeCharacter[]>) => {
-            const locationArray = generateRandomNums(action.payload.length);
+            const locationArray = generateRandomCoords(action.payload.length);
             const initiativeArray = generateRandomNums(action.payload.length);
             let { payload } = action
          

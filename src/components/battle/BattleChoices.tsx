@@ -4,23 +4,15 @@ import React, { SyntheticEvent } from 'react'
 
 interface BattleChoicesProps {
     activeCreatures: (activeCharacter | activeMonster)[]
-    setChosenAction: any
     handleAction: any
 }
 
 type possibleChoices = 'move' | 'attack' | 'pass'
 
-const BattleChoices: React.FC<BattleChoicesProps> = ({ activeCreatures, setChosenAction, handleAction }) => {
+const BattleChoices: React.FC<BattleChoicesProps> = ({ activeCreatures, handleAction }) => {
     const [choice, setChoice] = useState<string | null>(null);
 
-    const handleSubmit = (e: SyntheticEvent) => {
-        e.preventDefault();
-        if (choice === null) console.log('must choose')
-        if (choice === 'move') setChosenAction(() => 'move')
-        if (choice === 'attack') setChosenAction(() => 'attack')
-        if (choice === 'pass') setChosenAction(() => 'pass')
 
-    }
 
 
     const handleChange = (choice: string) => {

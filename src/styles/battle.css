@@ -26,11 +26,27 @@
 }
 
 .Bold {
-    border: 5px solid red;
+    border: 5px solid black;
 }
 
 .Active {
     color: red;
     font-weight: 900;
     text-decoration: underline;
+}
+
+.blue {
+    background-color: rgb(81, 104, 233);
+}
+
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
+}
+
+.Cell:hover {
+    background-color: yellow;
 }
