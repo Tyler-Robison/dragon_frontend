@@ -27,6 +27,7 @@ export type character = {
     chaMod: number;
     hp: number;
     abilities: string[];
+    speed: number;
 }
 
 export type activeCharacter = {
@@ -52,6 +53,7 @@ export type activeCharacter = {
     abilities: string[];
     initiative: number;
     location: string;
+    speed: number;
 }
 
 export type monster = {
@@ -76,6 +78,7 @@ export type monster = {
     hp: number;
     abilities: string[];
     creatureClass: 'Monster'
+    speed: number;
 }
 
 export type activeMonster = {
@@ -102,6 +105,7 @@ export type activeMonster = {
     creatureClass: 'Monster'
     initiative: number;   //can't seem to add later?
     location: string;
+    speed: number;
 }
 
 type itemTypes = 'Weapon' | 'Armor';
@@ -196,7 +200,8 @@ export const charactersSlice = createSlice({
                     cha: action.payload.cha,
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
-                    abilities: action.payload.abilities
+                    abilities: action.payload.abilities, 
+                    speed: action.payload.speed
                 }
             ]
         },
@@ -265,7 +270,8 @@ export const monstersSlice = createSlice({
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
                     abilities: action.payload.abilities,
-                    creatureClass: 'Monster'
+                    creatureClass: 'Monster',
+                    speed: action.payload.speed
                 }
             ]
         },
@@ -380,7 +386,8 @@ export const activeMonstersSlice = createSlice({
                     abilities: action.payload.abilities,
                     creatureClass: 'Monster',
                     initiative: action.payload.initiative,
-                    location: action.payload.location
+                    location: action.payload.location, 
+                    speed: action.payload.speed
                 }
             ]
         },
@@ -447,7 +454,8 @@ export const activeCharactersSlice = createSlice({
                     hp: action.payload.hp,
                     abilities: action.payload.abilities,
                     initiative: action.payload.initiative,
-                    location: action.payload.location
+                    location: action.payload.location, 
+                    speed: action.payload.speed
                 }
             ]
         },

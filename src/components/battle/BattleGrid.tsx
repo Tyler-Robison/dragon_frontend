@@ -157,14 +157,18 @@ const BattleGrid: React.FC = () => {
         for (let x = 0; x < nrows; x++) {
             const innerArray: string[] = [];
             for (let y = 0; y < ncols; y++) {
-                // determine if cell is within 3 of creature
-                // TODO: allow creatures to have diff movements
-                const xdiff = Math.abs(xCoord - x)
-                const ydiff = Math.abs(yCoord - y)
 
-                if (xdiff + ydiff > 3) innerArray[y] = 'blue'
-                if (xdiff + ydiff > 1 && xdiff + ydiff <= 3) innerArray[y] = 'green'
-                if (xdiff + ydiff === 1) innerArray[y] = 'red'
+                // determine if cell is within creature's speed (how many cells it can move)
+                const xdiff = Math.abs(xCoord - x);
+                const ydiff = Math.abs(yCoord - y);
+                const speed = currentCreature!.speed;
+
+                // blue -> can't move there
+                // green -> can move there
+                // red -> can move OR attack there
+                if (xdiff + ydiff > speed) innerArray[y] = 'blue';
+                else if (xdiff + ydiff > 1 && xdiff + ydiff <= speed) innerArray[y] = 'green';
+                else if (xdiff + ydiff === 1) innerArray[y] = 'red';
             }
             newColors.push(innerArray)
         }
