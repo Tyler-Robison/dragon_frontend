@@ -1,6 +1,7 @@
 import '../../styles/battle.css'
 import redDragon from '../../images/red_dragon.jpg'
 import golem from '../../images/golem.jpg'
+import babyGreenDragon from '../../images/baby_green_dragon.jpg'
 import fighter from '../../images/fighter.jpg'
 import warlock from '../../images/warlock.jpg'
 import rogue from '../../images/rogue.jpg'
@@ -27,6 +28,7 @@ const Cell: React.FC<CellProps> = ({ handleClick, creature, turnOrder, turn, col
 
     const redDragonImg = <img src={redDragon}></img>
     const golemImg = <img src={golem}></img>
+    const babyGreenDragonImg = <img src={babyGreenDragon}></img>
     const fighterImg = <img src={fighter}></img>
     const warlockImg = <img src={warlock}></img>
     const rogueImg = <img src={rogue}></img>
@@ -50,6 +52,7 @@ const Cell: React.FC<CellProps> = ({ handleClick, creature, turnOrder, turn, col
         // monsters
         if (creature.name === 'Stone Golem') creatureImg = golemImg;
         else if (creature.name === 'Adult Red Dragon') creatureImg = redDragonImg;
+        else if (creature.name === 'Young Green Dragon') creatureImg = babyGreenDragonImg;
 
         // characters
         else if (creature.creatureClass === 'Cleric') creatureImg = clericImg;

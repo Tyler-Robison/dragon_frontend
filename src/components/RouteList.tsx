@@ -8,6 +8,7 @@ import CreationPartTwo from "./CreationPartTwo";
 import BattlePlanner from "./battle/BattlePlanner";
 import BattleForm from "./battle/BattleForm";
 import BattleGrid from "./battle/BattleGrid";
+import VictoryScreen from "./battle/VictoryScreen";
 
 /** RouteList Contains all routes used by Healthy-Eater app
  * 
@@ -28,9 +29,10 @@ const RouteList: React.FC = () => {
             <Route path="/characters" element={<CIMList itemType="char" />} />
             <Route path="/monsters" element={<CIMList itemType="monster" />} />
             <Route path="/items" element={<CIMList itemType="item" />} />
-            {/* <Route path="/startmenu" element={<BattleForm />} /> */}
             <Route path="/planner" element={<BattlePlanner />} />
             <Route path="/battle" element={<BattleGrid />} />
+            <Route path="/battle/:whoWon" element={<VictoryScreen />} />
+
 
 
             <Route path="/characters/:characterID" element={<CharacterDetail />} />

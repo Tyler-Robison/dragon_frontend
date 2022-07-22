@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import BattleChoices from "./BattleChoices";
 import useTimedMessage from "../../customHooks/useTimedMessage";
 import TurnOrder from "./TurnOrder";
+import { NavItem } from "react-bootstrap";
 
 
 // for now, assign random grid positions based on initiative
@@ -24,10 +25,12 @@ const BattleGrid: React.FC = () => {
     const [chosenAction, setChosenAction] = useState<string | null>(null)
     const initialAP = 2;
     const [AP, setAP] = useState<number>(initialAP); // action points determine how many actions you can take
+    const [isVictory, setIsVictory] = useState<boolean>(false);
     const currentCreature = mergedArray.find(c => c.initiative === turnOrder[turn])
     const [invalidMoveMsg, setinvalidMoveMsg] = useTimedMessage(1500)
     const [missMsg, setMissMsg] = useTimedMessage(1500)
     const [hitMsg, setHitMsg] = useTimedMessage(1500)
+    
     const navigate = useNavigate();
     const nrows = 10;
     const ncols = 10;
@@ -76,6 +79,21 @@ const BattleGrid: React.FC = () => {
         if (currentCreature && !currentCreature!.isAlive) advanceTurn()
     }, [turn])
 
+
+    const checkVictory = () => {
+        let anyAlive = false;
+        for (let char of activeCharacters){
+            if (char.isAlive) anyAlive = true;
+        }
+        // if no characters alive, nav to victory screen for monsters
+        if (!anyAlive) navigate(`/victory/monsters`)
+
+        anyAlive = false;
+        for (let monster of activeMonsters){
+            if (monster.isAlive) anyAlive = true;
+        }
+        if (!anyAlive) navigate(`/victory/characters`)
+    }
 
     const handleClick = (coord: string, color: string) => {
 
@@ -126,6 +144,7 @@ const BattleGrid: React.FC = () => {
                 setMissMsg(true)
             }
 
+            checkVictory();
             setAP(currentVal => currentVal - 1);
         }
         else {
@@ -270,7 +289,6 @@ const BattleGrid: React.FC = () => {
             </table>
 
             <TurnOrder turn={turn} mergedArray={mergedArray} turnOrder={turnOrder} />
-
             <BattleChoices activeCreatures={mergedArray} handleAction={handleAction} />
         </div>
     )
