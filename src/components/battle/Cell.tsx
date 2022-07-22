@@ -64,7 +64,7 @@ const Cell: React.FC<CellProps> = ({ handleClick, creature, turnOrder, turn, col
     // coord and creature.location will always be the same
     else if (active) return <td className={`Cell Bold ${color}`}><div onClick={() => handleClick(coord, color)}>{creatureImg}</div></td>
 
-    return <td className={`Cell ${color}`}><div onClick={() => handleClick(coord, color)}>{creatureImg}</div></td>
+    return <td className={`Cell ${color} ${!creature!.isAlive && 'dead-img'}`}><div onClick={() => handleClick(coord, color)}>{creatureImg}</div></td>
 
 }
 

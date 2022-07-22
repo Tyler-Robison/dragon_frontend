@@ -6,7 +6,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import { act } from 'react-dom/test-utils';
 
 
-export type character = {
+export interface character {
     id: number;
     name: string;
     ac: number;
@@ -30,33 +30,14 @@ export type character = {
     speed: number;
 }
 
-export type activeCharacter = {
-    id: number;
-    name: string;
-    ac: number;
-    level: number;
-    race: string;
-    creatureClass: string;
-    con: number;
-    conMod: number;
-    str: number;
-    strMod: number;
-    dex: number;
-    dexMod: number;
-    int: number;
-    intMod: number;
-    wis: number;
-    wisMod: number;
-    cha: number;
-    chaMod: number;
-    hp: number;
-    abilities: string[];
+// todo: implement as intersection type
+export interface activeCharacter extends character {
     initiative: number;
     location: string;
-    speed: number;
+    isAlive: boolean;
 }
 
-export type monster = {
+export interface monster {
     id: number;
     name: string;
     ac: number;
@@ -81,38 +62,17 @@ export type monster = {
     speed: number;
 }
 
-export type activeMonster = {
-    id: number;
-    name: string;
-    ac: number;
-    acType: string;
-    challengeRating: number;
-    challengeXP: number;
-    con: number;
-    conMod: number;
-    str: number;
-    strMod: number;
-    dex: number;
-    dexMod: number;
-    int: number;
-    intMod: number;
-    wis: number;
-    wisMod: number;
-    cha: number;
-    chaMod: number;
-    hp: number;
-    abilities: string[];
-    creatureClass: 'Monster'
+export interface activeMonster extends monster {
     initiative: number;   //can't seem to add later?
     location: string;
-    speed: number;
+    isAlive: boolean;
 }
 
 type itemTypes = 'Weapon' | 'Armor';
 
 // enforce attack OR armor?????????????????
 // if attack not present, armor MUST be
-export type item = {
+export interface item {
     name: string;
     type: itemTypes;
     attack?: string;
@@ -201,7 +161,7 @@ export const charactersSlice = createSlice({
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
                     abilities: action.payload.abilities,
-                    speed: action.payload.speed
+                    speed: action.payload.speed //form doesn't contain speed field
                 }
             ]
         },
@@ -343,6 +303,7 @@ const generateRandomNums = (length: number) => {
     return outputArr;
 }
 
+// TODO: allow for user inputted grid size
 const generateRandomCoords = (length: number, characterLocations: string[] | null) => {
     const outputArr: string[] = []
     while (length > 0) {
@@ -391,7 +352,8 @@ export const activeMonstersSlice = createSlice({
                     creatureClass: 'Monster',
                     initiative: action.payload.initiative,
                     location: action.payload.location,
-                    speed: action.payload.speed
+                    speed: action.payload.speed,
+                    isAlive: true
                 }
             ]
         },
@@ -405,7 +367,6 @@ export const activeMonstersSlice = createSlice({
             })
         },
         assignMonsterInitAndLoc: (state, action: PayloadAction<{ monsters: activeMonster[], activeChars: activeCharacter[] }>) => {
-            console.log('assign monster init')
             const characterLocations = action.payload.activeChars.map(c => c.location)
             const locationArray = generateRandomCoords(action.payload.monsters.length, characterLocations);
             const initiativeArray = generateRandomNums(action.payload.monsters.length);
@@ -424,11 +385,23 @@ export const activeMonstersSlice = createSlice({
         },
         // TODO: removeMonster if hp <= 0
         hitMonster: (state, action: PayloadAction<{ initiative: number, damage: number }>) => {
+            let isDead = false;
             state.activeMonsters.map(m => {
                 if (m.initiative === action.payload.initiative) m.hp -= action.payload.damage;
+                if (m.hp <= 0) isDead = true
                 return m
             })
-        }
+
+            if (isDead) {
+                console.log('dead')
+                state.activeMonsters = state.activeMonsters.map(m => {
+                    if (m.initiative === action.payload.initiative) {
+                        m.isAlive = false;
+                    }
+                    return m;
+                });
+            }
+        },
     }
 })
 
@@ -461,7 +434,8 @@ export const activeCharactersSlice = createSlice({
                     abilities: action.payload.abilities,
                     initiative: action.payload.initiative,
                     location: action.payload.location,
-                    speed: action.payload.speed
+                    speed: action.payload.speed,
+                    isAlive: true
                 }
             ]
         },
@@ -475,7 +449,6 @@ export const activeCharactersSlice = createSlice({
             })
         },
         assignCharacterInitAndLoc: (state, action: PayloadAction<activeCharacter[]>) => {
-            console.log('assign char init')
             const locationArray = generateRandomCoords(action.payload.length, null);
             const initiativeArray = generateRandomNums(action.payload.length);
             let { payload } = action
@@ -500,7 +473,12 @@ export const activeCharactersSlice = createSlice({
 
             if (isDead) {
                 console.log('dead')
-                state.activeCharacters = state.activeCharacters.filter(c => c.initiative !== action.payload.initiative);
+                state.activeCharacters = state.activeCharacters.map(c => {
+                    if (c.initiative === action.payload.initiative) {
+                        c.isAlive = false;
+                    }
+                    return c;
+                });
             }
         }
     }

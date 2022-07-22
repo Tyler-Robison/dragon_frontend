@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BattleChoices from "./BattleChoices";
 import useTimedMessage from "../../customHooks/useTimedMessage";
+import TurnOrder from "./TurnOrder";
 
 
 // for now, assign random grid positions based on initiative
@@ -46,14 +47,9 @@ const BattleGrid: React.FC = () => {
     console.log('active', mergedArray)
 
     // Assign all active monsters/characters random + unique locations and initiative
-    // CREATES INFINITE LOOP!!!!!!!!!!!!!!!
     useEffect(() => {
-        console.log('use effect running')
         dispatch(assignCharacterInitAndLoc(activeCharacters))
-        
-        // not getting here
-        console.log('done with chars')
-        dispatch(assignMonsterInitAndLoc({monsters: activeMonsters, activeChars: activeCharacters}))
+        dispatch(assignMonsterInitAndLoc({ monsters: activeMonsters, activeChars: activeCharacters }))
     }, [])
 
     useEffect(() => {
@@ -67,10 +63,18 @@ const BattleGrid: React.FC = () => {
         if (AP <= 0) advanceTurn();
     }, [AP])
 
+    // skip turns of dead creatures
     const advanceTurn = () => {
         turn < mergedArray.length - 1 ? setTurn(prev => prev + 1) : setTurn(() => 0);
         setAP(() => initialAP)
     }
+
+    useEffect(() => {
+        // if creatures whose turn it is is dead, advance turn again
+        // beware infinite loop -> handle all dead!
+
+        if (currentCreature && !currentCreature!.isAlive) advanceTurn()
+    }, [turn])
 
 
     const handleClick = (coord: string, color: string) => {
@@ -87,9 +91,15 @@ const BattleGrid: React.FC = () => {
         return true
     }
 
+    const isAlive = (coord: string) => {
+        const attackedCreature = mergedArray.find(creature => creature.location === coord);
+        if (attackedCreature && attackedCreature.isAlive === false) return false;
+        return true;
+    }
+
     // handle crit miss
     const handleAttack = (coord: string, color: string) => {
-        if (color === 'red' && !isEmpty(coord)) {
+        if (color === 'red' && !isEmpty(coord) && isAlive(coord)) {
             const attackedCreature = mergedArray.find(creature => creature.location === coord);
             const { initiative } = attackedCreature!
             const damage = calculateAttackDamage(currentCreature!)
@@ -102,13 +112,13 @@ const BattleGrid: React.FC = () => {
 
             else if (hit === 'hit') {
                 setHitMsg(true)
-                if ('level' in attackedCreature!) dispatch(hitCharacter({initiative, damage}))
+                if ('level' in attackedCreature!) dispatch(hitCharacter({ initiative, damage }))
                 else dispatch(hitMonster({ initiative, damage }))
             }
 
             else if (hit === 'crit hit') {
                 setHitMsg(true)
-                if ('level' in attackedCreature!) dispatch(hitCharacter({initiative, damage: damage * 2}))
+                if ('level' in attackedCreature!) dispatch(hitCharacter({ initiative, damage: damage * 2 }))
                 else dispatch(hitMonster({ initiative, damage: damage * 2 }))
             }
 
@@ -117,6 +127,9 @@ const BattleGrid: React.FC = () => {
             }
 
             setAP(currentVal => currentVal - 1);
+        }
+        else {
+            console.log("can't attack there!")
         }
     }
 
@@ -182,7 +195,6 @@ const BattleGrid: React.FC = () => {
 
     // don't need action AND chosenAction!!!!!!!!!!!
     const handleAction = (e: SyntheticEvent, action: string) => {
-        console.log(currentCreature)
 
         e.preventDefault();
         if (action === 'move') {
@@ -245,7 +257,6 @@ const BattleGrid: React.FC = () => {
 
     if (turnOrder.length === 0) return <p>Loading...</p>
 
-    // TODO: make turn list it's own component
     return (
         <div>
             <h1>Eliminate Monsters to Win!</h1>
@@ -257,19 +268,10 @@ const BattleGrid: React.FC = () => {
             <table>
                 <tbody>{generateGrid()}</tbody>
             </table>
-            <div>
-                <p>Turn Order</p>
-                {turnOrder.map((t, idx) => {
-                    const creature: activeCharacter | activeMonster | undefined = mergedArray.find(c => c.initiative === t);
 
-                    return (idx === turn ?
-                        <p className="Active" key={idx}><b>{idx + 1}</b>  {creature!.name} <b>HP: {creature!.hp}</b> </p> :
-                        <p key={idx}> <b>{idx + 1}</b> {creature!.name} <b>HP: {creature!.hp}</b> </p>)
-                })}
-            </div>
-            <BattleChoices
-                activeCreatures={mergedArray}
-                handleAction={handleAction} />
+            <TurnOrder turn={turn} mergedArray={mergedArray} turnOrder={turnOrder} />
+
+            <BattleChoices activeCreatures={mergedArray} handleAction={handleAction} />
         </div>
     )
 }
