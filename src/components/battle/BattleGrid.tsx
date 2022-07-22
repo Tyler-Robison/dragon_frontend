@@ -46,9 +46,14 @@ const BattleGrid: React.FC = () => {
     console.log('active', mergedArray)
 
     // Assign all active monsters/characters random + unique locations and initiative
+    // CREATES INFINITE LOOP!!!!!!!!!!!!!!!
     useEffect(() => {
+        console.log('use effect running')
         dispatch(assignCharacterInitAndLoc(activeCharacters))
-        dispatch(assignMonsterInitAndLoc(activeMonsters))
+        
+        // not getting here
+        console.log('done with chars')
+        dispatch(assignMonsterInitAndLoc({monsters: activeMonsters, activeChars: activeCharacters}))
     }, [])
 
     useEffect(() => {

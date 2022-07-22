@@ -200,7 +200,7 @@ export const charactersSlice = createSlice({
                     cha: action.payload.cha,
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
-                    abilities: action.payload.abilities, 
+                    abilities: action.payload.abilities,
                     speed: action.payload.speed
                 }
             ]
@@ -343,12 +343,16 @@ const generateRandomNums = (length: number) => {
     return outputArr;
 }
 
-const generateRandomCoords = (length: number) => {
+const generateRandomCoords = (length: number, characterLocations: string[] | null) => {
     const outputArr: string[] = []
     while (length > 0) {
         const randomNumOne = Math.floor(Math.random() * 10);
         const randomNumTwo = Math.floor(Math.random() * 10);
-        const coord = `${randomNumOne}-${randomNumTwo}`
+        const coord = `${randomNumOne}-${randomNumTwo}`;
+
+        // character locations added first, have to make sure monsters don't get placed in spot occupied by character
+        if (characterLocations && characterLocations.includes(coord)) continue;
+
         if (!outputArr.includes(coord)) {
             outputArr.push(coord);
             length--;
@@ -386,7 +390,7 @@ export const activeMonstersSlice = createSlice({
                     abilities: action.payload.abilities,
                     creatureClass: 'Monster',
                     initiative: action.payload.initiative,
-                    location: action.payload.location, 
+                    location: action.payload.location,
                     speed: action.payload.speed
                 }
             ]
@@ -400,15 +404,17 @@ export const activeMonstersSlice = createSlice({
                 return m
             })
         },
-        assignMonsterInitAndLoc: (state, action: PayloadAction<activeMonster[]>) => {
-            const locationArray = generateRandomCoords(action.payload.length);
-            const initiativeArray = generateRandomNums(action.payload.length);
+        assignMonsterInitAndLoc: (state, action: PayloadAction<{ monsters: activeMonster[], activeChars: activeCharacter[] }>) => {
+            console.log('assign monster init')
+            const characterLocations = action.payload.activeChars.map(c => c.location)
+            const locationArray = generateRandomCoords(action.payload.monsters.length, characterLocations);
+            const initiativeArray = generateRandomNums(action.payload.monsters.length);
 
-            let { payload } = action
+            let { monsters } = action.payload
 
-            payload = JSON.parse(JSON.stringify(payload));
+            monsters = JSON.parse(JSON.stringify(monsters));
 
-            const modifiedMonsters = payload.map((m, idx) => {
+            const modifiedMonsters = monsters.map((m, idx) => {
                 m.location = locationArray[idx];
                 m.initiative = initiativeArray[idx];
                 return m;
@@ -454,7 +460,7 @@ export const activeCharactersSlice = createSlice({
                     hp: action.payload.hp,
                     abilities: action.payload.abilities,
                     initiative: action.payload.initiative,
-                    location: action.payload.location, 
+                    location: action.payload.location,
                     speed: action.payload.speed
                 }
             ]
@@ -469,7 +475,8 @@ export const activeCharactersSlice = createSlice({
             })
         },
         assignCharacterInitAndLoc: (state, action: PayloadAction<activeCharacter[]>) => {
-            const locationArray = generateRandomCoords(action.payload.length);
+            console.log('assign char init')
+            const locationArray = generateRandomCoords(action.payload.length, null);
             const initiativeArray = generateRandomNums(action.payload.length);
             let { payload } = action
 
