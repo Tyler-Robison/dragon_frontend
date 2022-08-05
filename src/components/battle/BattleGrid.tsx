@@ -286,6 +286,7 @@ const BattleGrid: React.FC = () => {
                 <tbody>{generateGrid()}</tbody>
             </table>
 
+            {/* TODO: 2 creatures can have same initiative, leading to same bugs. Was Tyler/dragon */}
             <TurnOrder turn={turn} mergedArray={mergedArray} turnOrder={turnOrder} />
             <BattleChoices chosenAction={chosenAction!} setChosenAction={setChosenAction} />
         </div>

@@ -9,6 +9,7 @@ import BattlePlanner from "./battle/BattlePlanner";
 import BattleForm from "./battle/BattleForm";
 import BattleGrid from "./battle/BattleGrid";
 import VictoryScreen from "./battle/VictoryScreen";
+import LevelChar from "./characters/LevelChar";
 
 /** RouteList Contains all routes used by Healthy-Eater app
  * 
@@ -37,6 +38,7 @@ const RouteList: React.FC = () => {
 
             <Route path="/characters/:characterID" element={<CharacterDetail />} />
 
+            <Route path="/level/:id" element={<LevelChar />} />
             {/* re-direct routes */}
             <Route path="/" element={<Navigate replace to="/home" />} />
             <Route path='*' element={<Navigate replace to="/home" />} />

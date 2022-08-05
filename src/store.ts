@@ -3,16 +3,12 @@ import { v4 as uuid } from 'uuid';
 import { MonsterAPI } from './APIs/monsterAPI';
 import { CharacterAPI } from './APIs/characterAPI';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
-import { act } from 'react-dom/test-utils';
 
-
-export interface character {
+// traits shared between char and monster
+interface creature {
     id: number;
     name: string;
     ac: number;
-    level: number;
-    race: string;
-    creatureClass: string;
     con: number;
     conMod: number;
     str: number;
@@ -28,6 +24,13 @@ export interface character {
     hp: number;
     abilities: string[];
     speed: number;
+}
+
+export interface character extends creature {
+    level: number;
+    race: string;
+    creatureClass: string;
+    exp: number;
 }
 
 export interface activeCharacter extends character {
@@ -36,33 +39,15 @@ export interface activeCharacter extends character {
     isAlive: boolean;
 }
 
-export interface monster {
-    id: number;
-    name: string;
-    ac: number;
+export interface monster extends creature {
     acType: string;
     challengeRating: number;
     challengeXP: number;
-    con: number;
-    conMod: number;
-    str: number;
-    strMod: number;
-    dex: number;
-    dexMod: number;
-    int: number;
-    intMod: number;
-    wis: number;
-    wisMod: number;
-    cha: number;
-    chaMod: number;
-    hp: number;
-    abilities: string[];
     creatureClass: 'Monster'
-    speed: number;
 }
 
 export interface activeMonster extends monster {
-    initiative: number;   //can't seem to add later?
+    initiative: number;
     location: string;
     isAlive: boolean;
 }
@@ -125,6 +110,7 @@ const initialItemState: ItemsSliceState = {
     items: starterItems
 }
 
+
 export const fillCharacterThunk = createAsyncThunk(
     // what is the purpose of this string?
     'characters/fillCharacterThunk',
@@ -160,7 +146,8 @@ export const charactersSlice = createSlice({
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
                     abilities: action.payload.abilities,
-                    speed: action.payload.speed //form doesn't contain speed field
+                    speed: action.payload.speed, //form doesn't contain speed field
+                    exp: 0
                 }
             ]
         },
@@ -176,6 +163,19 @@ export const charactersSlice = createSlice({
                     action.payload : char);
             })
         },
+
+        addExp: (state, action: PayloadAction<{ characters: character[], exp: number }>) => {
+            const idArray = action.payload.characters.map(c => c.id);
+            state.characters = state.characters.map(char => {
+
+                if (idArray.includes(char.id)) {
+                    char.exp += action.payload.exp
+                    // character will level if exp > level * 1000, excess exp overflows into next level
+                    if (char.exp >= char.level * 1000) char = adjustLevel(char)
+                }
+                return char
+            })
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(fillCharacterThunk.pending, (state, action) => {
@@ -190,6 +190,15 @@ export const charactersSlice = createSlice({
         })
     },
 })
+
+export const adjustLevel = (char: character) => {
+    let { exp, level } = char
+    while (exp >= level * 1000){
+        exp -= level * 1000;
+        level++;
+    }
+    return {...char, exp, level};
+}
 
 export const fillMonsterThunk = createAsyncThunk(
     'monsters/fillMonsterThunk',
@@ -373,7 +382,7 @@ export const activeMonstersSlice = createSlice({
             let { monsters } = action.payload
 
             const modifiedMonsters = monsters.map((m, idx) => {
-                return {...m, location: locationArray[idx], initiative: initiativeArray[idx]};
+                return { ...m, location: locationArray[idx], initiative: initiativeArray[idx] };
             })
 
             state.activeMonsters = modifiedMonsters;
@@ -388,7 +397,6 @@ export const activeMonstersSlice = createSlice({
             })
 
             if (isDead) {
-                console.log('dead')
                 state.activeMonsters = state.activeMonsters.map(m => {
                     if (m.initiative === action.payload.initiative) {
                         m.isAlive = false;
@@ -427,9 +435,10 @@ export const activeCharactersSlice = createSlice({
                     chaMod: action.payload.chaMod,
                     hp: action.payload.hp,
                     abilities: action.payload.abilities,
+                    exp: action.payload.exp,
+                    speed: action.payload.speed,
                     initiative: action.payload.initiative,
                     location: action.payload.location,
-                    speed: action.payload.speed,
                     isAlive: true
                 }
             ]
@@ -467,7 +476,6 @@ export const activeCharactersSlice = createSlice({
             })
 
             if (isDead) {
-                console.log('dead')
                 state.activeCharacters = state.activeCharacters.map(c => {
                     if (c.initiative === action.payload.initiative) {
                         c.isAlive = false;
@@ -479,7 +487,7 @@ export const activeCharactersSlice = createSlice({
     }
 })
 
-export const { addCharacter, removeCharacter, editCharacter } = charactersSlice.actions;
+export const { addCharacter, removeCharacter, editCharacter, addExp } = charactersSlice.actions;
 export const { addMonster, removeMonster, editMonster } = monstersSlice.actions;
 export const { addItem, removeItem, editItem } = itemsSlice.actions;
 export const { addActiveMonster, removeActiveMonster, moveMonster, assignMonsterInitAndLoc, hitMonster } = activeMonstersSlice.actions

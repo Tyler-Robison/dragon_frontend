@@ -29,6 +29,7 @@ const CharCard: React.FC<CharCardProps> = ({ char }) => {
                 <p>Int: {char.int} Mod: {char.intMod}</p>
                 <p>Wis: {char.wis} Mod: {char.wisMod}</p>
                 <p>Cha: {char.cha} Mod: {char.chaMod}</p>
+                <p>Exp: {char.exp}</p>
 
                 <p><b>Abilites:</b> {displayAbilities(char.abilities)}</p>
                 <Link to={`/characters/${char.id}`}><b>Edit</b></Link>
