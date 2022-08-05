@@ -52,7 +52,7 @@ const Cell: React.FC<CellProps> = ({ handleClick, creature, turnOrder, turn, col
         // monsters
         if (creature.name === 'Stone Golem') creatureImg = golemImg;
         else if (creature.name === 'Adult Red Dragon') creatureImg = redDragonImg;
-        else if (creature.name === 'Young Green Dragon') creatureImg = babyGreenDragonImg;
+        else if (creature.name === 'Baby Green Dragon') creatureImg = babyGreenDragonImg;
 
         // characters
         else if (creature.creatureClass === 'Cleric') creatureImg = clericImg;

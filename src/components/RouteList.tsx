@@ -31,7 +31,7 @@ const RouteList: React.FC = () => {
             <Route path="/items" element={<CIMList itemType="item" />} />
             <Route path="/planner" element={<BattlePlanner />} />
             <Route path="/battle" element={<BattleGrid />} />
-            <Route path="/battle/:whoWon" element={<VictoryScreen />} />
+            <Route path="/victory/:whoWon" element={<VictoryScreen />} />
 
 
 

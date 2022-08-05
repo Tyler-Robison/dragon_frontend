@@ -1,46 +1,45 @@
-import { FormEventHandler, useState } from "react";
-import { activeCharacter, activeMonster } from "../../store"
-import React, { SyntheticEvent } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 
 interface BattleChoicesProps {
-    activeCreatures: (activeCharacter | activeMonster)[]
-    handleAction: any
+    setChosenAction: Dispatch<SetStateAction<string | null>>
+    chosenAction: string
 }
 
-type possibleChoices = 'move' | 'attack' | 'pass'
+type possibleChoices = 'move' | 'attack' | 'pass' | 'kill';
 
-const BattleChoices: React.FC<BattleChoicesProps> = ({ activeCreatures, handleAction }) => {
-    const [choice, setChoice] = useState<string | null>(null);
+const BattleChoices: React.FC<BattleChoicesProps> = ({ setChosenAction, chosenAction }) => {
 
-
-
-
-    const handleChange = (choice: string) => {
-        if (choice === 'move') setChoice('move')
-        else if (choice === 'attack') setChoice('attack')
-        else if (choice === 'pass') setChoice('pass')
+    const handleChange = (choice: possibleChoices) => {
+        if (choice === 'move') setChosenAction('move')
+        else if (choice === 'attack') setChosenAction('attack')
+        else if (choice === 'kill') setChosenAction('kill')
+        else if (choice === 'pass') setChosenAction('pass')
+      
     }
 
     return <div>
 
-        <form onSubmit={(e) => handleAction(e, choice)}>
-            <RadioButton
-                label="Move"
-                value={choice === 'move'}
-                onChange={() => handleChange('move')}
-            />
-            <RadioButton
-                label="Attack"
-                value={choice === 'attack'}
-                onChange={() => handleChange('attack')}
-            />
-            <RadioButton
-                label="Pass"
-                value={choice === 'pass'}
-                onChange={() => handleChange('pass')}
-            />
-            <button type="submit">Choose</button>
-        </form>
+        <RadioButton
+            label="Move"
+            value={chosenAction === 'move'}
+            onChange={() => handleChange('move')}
+        />
+        <RadioButton
+            label="Attack"
+            value={chosenAction === 'attack'}
+            onChange={() => handleChange('attack')}
+        />
+        <RadioButton
+            label="Pass"
+            value={chosenAction === 'pass'}
+            onChange={() => handleChange('pass')}
+        />
+        <RadioButton
+            label="Kill"
+            value={chosenAction === 'kill'}
+            onChange={() => handleChange('kill')}
+        />
+
     </div>
 }
 

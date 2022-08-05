@@ -30,7 +30,6 @@ export interface character {
     speed: number;
 }
 
-// todo: implement as intersection type
 export interface activeCharacter extends character {
     initiative: number;
     location: string;
@@ -373,12 +372,8 @@ export const activeMonstersSlice = createSlice({
 
             let { monsters } = action.payload
 
-            monsters = JSON.parse(JSON.stringify(monsters));
-
             const modifiedMonsters = monsters.map((m, idx) => {
-                m.location = locationArray[idx];
-                m.initiative = initiativeArray[idx];
-                return m;
+                return {...m, location: locationArray[idx], initiative: initiativeArray[idx]};
             })
 
             state.activeMonsters = modifiedMonsters;

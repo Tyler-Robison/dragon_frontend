@@ -30,7 +30,7 @@ const BattleGrid: React.FC = () => {
     const [invalidMoveMsg, setinvalidMoveMsg] = useTimedMessage(1500)
     const [missMsg, setMissMsg] = useTimedMessage(1500)
     const [hitMsg, setHitMsg] = useTimedMessage(1500)
-    
+
     const navigate = useNavigate();
     const nrows = 10;
     const ncols = 10;
@@ -46,8 +46,6 @@ const BattleGrid: React.FC = () => {
         return outerArray
     }
     const [colors, setColors] = useState(setInitialColors())
-
-    console.log('active', mergedArray)
 
     // Assign all active monsters/characters random + unique locations and initiative
     useEffect(() => {
@@ -70,6 +68,7 @@ const BattleGrid: React.FC = () => {
     const advanceTurn = () => {
         turn < mergedArray.length - 1 ? setTurn(prev => prev + 1) : setTurn(() => 0);
         setAP(() => initialAP)
+        setChosenAction('move')
     }
 
     useEffect(() => {
@@ -77,21 +76,30 @@ const BattleGrid: React.FC = () => {
         // beware infinite loop -> handle all dead!
 
         if (currentCreature && !currentCreature!.isAlive) advanceTurn()
-    }, [turn])
+        if (chosenAction === 'pass') advanceTurn()
+    }, [turn, chosenAction])
+
+    // gets stale state without this
+    useEffect(() => {
+        checkVictory();
+    }, [activeCharacters, activeMonsters])
 
 
+    // re-factor to be cleaner.
     const checkVictory = () => {
         let anyAlive = false;
-        for (let char of activeCharacters){
+
+        for (let char of activeCharacters) {
             if (char.isAlive) anyAlive = true;
         }
+
         // if no characters alive, nav to victory screen for monsters
         if (!anyAlive) navigate(`/victory/monsters`)
-
         anyAlive = false;
-        for (let monster of activeMonsters){
+        for (let monster of activeMonsters) {
             if (monster.isAlive) anyAlive = true;
         }
+
         if (!anyAlive) navigate(`/victory/characters`)
     }
 
@@ -99,9 +107,11 @@ const BattleGrid: React.FC = () => {
 
         if (chosenAction === 'move') handleMove(coord, color)
 
-        if (chosenAction === 'attack') {
-            handleAttack(coord, color)
-        }
+        if (chosenAction === 'attack') handleAttack(coord, color)
+
+        if (chosenAction === 'kill') handleAttack(coord, color, true)
+
+        if (chosenAction === 'pass') advanceTurn()
     }
 
     const isEmpty = (coord: string) => {
@@ -116,16 +126,21 @@ const BattleGrid: React.FC = () => {
     }
 
     // handle crit miss
-    const handleAttack = (coord: string, color: string) => {
+    const handleAttack = (coord: string, color: string, kill: boolean = false) => {
         if (color === 'red' && !isEmpty(coord) && isAlive(coord)) {
             const attackedCreature = mergedArray.find(creature => creature.location === coord);
             const { initiative } = attackedCreature!
             const damage = calculateAttackDamage(currentCreature!)
             const hit = calculateHit(currentCreature!, attackedCreature!)
 
+            // kill cmd exists for de-bugging purposes, kills creature, always hits
+            if (kill) {
+                if ('level' in attackedCreature!) dispatch(hitCharacter({ initiative, damage: attackedCreature!.hp }))
+                else dispatch(hitMonster({ initiative, damage: attackedCreature!.hp }))
+            }
+
             if (hit === 'miss') {
                 setMissMsg(true);
-
             }
 
             else if (hit === 'hit') {
@@ -144,7 +159,6 @@ const BattleGrid: React.FC = () => {
                 setMissMsg(true)
             }
 
-            checkVictory();
             setAP(currentVal => currentVal - 1);
         }
         else {
@@ -212,28 +226,12 @@ const BattleGrid: React.FC = () => {
         setColors(newColors)
     }
 
-    // don't need action AND chosenAction!!!!!!!!!!!
-    const handleAction = (e: SyntheticEvent, action: string) => {
-
-        e.preventDefault();
-        if (action === 'move') {
-            setChosenAction('move')
-            console.log('you chose move')
-        }
-        else if (action === 'attack') {
-            setChosenAction('attack')
-            console.log('you chose attack')
-        }
-        else if (action === 'pass') {
-            advanceTurn();
-        }
-    }
 
     const generateGrid = () => {
         const initialGrid = [];
         const locations = [];
 
-        for (let ele of mergedArray) {
+        for (const ele of mergedArray) {
             locations.push(ele.location)
         }
 
@@ -289,7 +287,7 @@ const BattleGrid: React.FC = () => {
             </table>
 
             <TurnOrder turn={turn} mergedArray={mergedArray} turnOrder={turnOrder} />
-            <BattleChoices activeCreatures={mergedArray} handleAction={handleAction} />
+            <BattleChoices chosenAction={chosenAction!} setChosenAction={setChosenAction} />
         </div>
     )
 }
